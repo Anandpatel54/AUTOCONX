@@ -20,7 +20,7 @@ export const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
   const handleReturnHome = () => {
     navigation.reset({
       index: 0,
-      routes: [{ name: 'MyVehicle' }],
+      routes: [{ name: 'MainTabs' }],
     });
   };
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { RootStackParamList } from './types';
-import { MyVehicleScreen } from '../screens/MyVehicleScreen';
+import { MainTabNavigator } from './MainTabNavigator';
 import { BookInspectionScreen } from '../screens/BookInspectionScreen';
 import { ConfirmationScreen } from '../screens/ConfirmationScreen';
 import { colors } from '../theme';
@@ -13,7 +13,7 @@ export const AppNavigator: React.FC = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="MyVehicle"
+        initialRouteName="MainTabs"
         screenOptions={{
           headerStyle: {
             backgroundColor: colors.background,
@@ -30,8 +30,8 @@ export const AppNavigator: React.FC = () => {
         }}
       >
         <Stack.Screen
-          name="MyVehicle"
-          component={MyVehicleScreen}
+          name="MainTabs"
+          component={MainTabNavigator}
           options={{
             headerShown: false,
           }}

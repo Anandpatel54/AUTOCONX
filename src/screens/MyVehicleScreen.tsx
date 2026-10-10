@@ -16,7 +16,6 @@ import { VehicleCard } from '../components/vehicle/VehicleCard';
 import { Button } from '../components/common/Button';
 import { Card } from '../components/common/Card';
 import { BellIcon } from '../components/common/BellIcon';
-import { BottomTabBar } from '../components/common/BottomTabBar';
 
 export const MyVehicleScreen: React.FC<MyVehicleScreenProps> = ({ navigation }) => {
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
@@ -168,16 +167,6 @@ export const MyVehicleScreen: React.FC<MyVehicleScreenProps> = ({ navigation }) 
           </View>
         ) : null}
       </ScrollView>
-
-      {/* Pinned Bottom Navigation Tab Bar */}
-      <BottomTabBar
-        activeTab="vehicle"
-        onBookPress={() => {
-          if (vehicle) {
-            navigation.navigate('BookInspection', { vehicleId: vehicle.id });
-          }
-        }}
-      />
     </SafeAreaView>
   );
 };
