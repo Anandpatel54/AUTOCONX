@@ -1,97 +1,155 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# AutoConX - Mini Inspection Booking Flow
 
-# Getting Started
+A 3-screen React Native + TypeScript application implementing a real-world vehicle inspection booking flow for **AutoConX Technologies**.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+---
 
-## Step 1: Start Metro
+## 📱 Features & Highlights
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+1. **Screen 1: My Vehicle**
+   - Displays 2022 Nissan Patrol with official UAE Dubai license plate styling (`Dubai A 12345`).
+   - Vehicle health stats (Odometer, Last Inspection Date, Chassis/VIN snippet, Status badge).
+   - "Book Inspection" primary call-to-action.
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+2. **Screen 2: Book Inspection (Form & State Machine)**
+   - **Inspection Package Selection:** Pre-Purchase (Popular), Annual Safety & RTA Check, and Major Powertrain Check with duration and AED pricing.
+   - **Location with Graceful Fallback:** 
+     - "Use Current Location" GPS button.
+     - "Simulate GPS Deny" button for reviewers to easily test the permission denial flow.
+     - Fully editable manual address input fallback so users are never blocked.
+   - **Preferred Date:** Upcoming appointment selection chips with formatted days.
+   - **Additional Notes:** Multi-line text field for special parking or gate access notes.
+   - **Inline Validation:** User-friendly error messages on missing required fields.
+   - **Loading State & Double-Tap Protection:** Button disabled with activity spinner, rapid tap throttling to prevent duplicate bookings.
+   - **Draft Persistence:** Unfinished form inputs automatically persist via `@react-native-async-storage/async-storage` across app reloads/restarts.
+   - **Failure Simulation & Retry:** Predictable network failure on attempt #1 with dedicated `ErrorBanner` and immediate "Try Again" retry action preserving all form inputs.
+   - **Mobile Keyboard UX:** `KeyboardAvoidingView` with scroll view and tap handling to keep inputs and submit CTA fully visible.
 
-```sh
-# Using npm
+3. **Screen 3: Confirmation**
+   - "Inspection Confirmed" status with emerald checkmark badge.
+   - Unique reference identifier (e.g. `ACX-29384`).
+   - Full booking breakdown (Vehicle, Inspection type, Date, Address, Notes).
+   - Next-steps dispatch timeline.
+   - Navigation stack reset to prevent accidental backward navigation into a submitted form.
+
+---
+
+## 🛠 Tech Stack & Versions
+
+- **Framework:** React Native `0.87.1` (New Architecture enabled)
+- **Language:** TypeScript `6.0.3`
+- **React:** `19.2.3`
+- **Navigation:** `@react-navigation/native` & `@react-navigation/native-stack` `v7`
+- **Persistence:** `@react-native-async-storage/async-storage` `v3.1.1`
+- **Safe Area:** `react-native-safe-area-context` `v5.5.2`
+- **Unit Testing:** Jest `v29.6.3` with React Native preset
+
+---
+
+## 📂 Project Architecture
+
+```
+src/
+├── api/
+│   └── mockApi.ts              # Simulated endpoints (GET /vehicles, GET /inspection-types, POST /bookings)
+├── components/
+│   ├── booking/
+│   │   ├── DatePickerField.tsx # Date selection chips with validation
+│   │   ├── LocationPicker.tsx  # GPS fetch + manual fallback + denial simulator
+│   │   └── TypeSelector.tsx    # Inspection packages with pricing
+│   ├── common/
+│   │   ├── Button.tsx          # Double-tap throttling, loading spinner, variants
+│   │   ├── Card.tsx            # Elevated container with shadow tokens
+│   │   ├── ErrorBanner.tsx     # Submission failure card with "Try Again" retry CTA
+│   │   └── Input.tsx           # Form input with label & error states
+│   └── vehicle/
+│       └── VehicleCard.tsx     # Nissan Patrol UAE license plate & service card
+├── hooks/
+│   ├── useBookingDraft.ts      # AsyncStorage draft auto-save and hydration hook
+│   └── useLocation.ts          # Geolocation permission request with manual fallback
+├── navigation/
+│   ├── AppNavigator.tsx        # Native Stack Navigation container
+│   └── types.ts                # RootStackParamList & navigation prop types
+├── theme/
+│   └── index.ts                # Automotive color palette, spacing, and radius tokens
+└── types/
+    └── index.ts                # Vehicle, InspectionType, BookingRequest, BookingResponse types
+```
+
+---
+
+## 🚀 How to Install and Run
+
+### 1. Prerequisites
+- Node.js `>= 22.11.0`
+- macOS with Xcode & CocoaPods (for iOS) or Android Studio (for Android)
+
+### 2. Install Dependencies
+```bash
+npm install
+cd ios && pod install && cd ..
+```
+
+### 3. Start Metro Bundler
+```bash
 npm start
-
-# OR using Yarn
-yarn start
 ```
 
-## Step 2: Build and run your app
-
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
-
-```sh
-# Using npm
-npm run android
-
-# OR using Yarn
-yarn android
-```
-
-### iOS
-
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
+### 4. Run on iOS Simulator
+```bash
 npm run ios
-
-# OR using Yarn
-yarn ios
+# OR directly open in Xcode:
+# open ios/AutoConXAssessment.xcworkspace
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+### 5. Run on Android Emulator
+```bash
+npm run android
+```
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+### 6. Run Unit Tests & Linter
+```bash
+npm test
+npm run lint
+npx tsc --noEmit
+```
 
-## Step 3: Modify your app
+---
 
-Now that you have successfully run the app, let's make changes!
+## 🔍 How Key Requirements Are Handled
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+### 1. Data State & Mock API Failure Simulation
+- Located in [`src/api/mockApi.ts`](src/api/mockApi.ts).
+- Network latency is simulated via async delays (~450ms–1000ms).
+- **Predictable Failure:** The booking request is programmed to fail on attempt #1 with a `503 Service Unavailable` error, allowing reviewers to test the error UI and retry experience. Attempt #2 (or clicking "Try Again") succeeds and creates the booking.
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+### 2. Draft Persistence Across App Restarts
+- Located in [`src/hooks/useBookingDraft.ts`](src/hooks/useBookingDraft.ts).
+- Partially completed form fields (`inspectionType`, `address`, `date`, `notes`) are saved to `@react-native-async-storage/async-storage`.
+- Upon reloading the app (`Cmd + R` in iOS Simulator), the draft is restored, and a notification banner indicates restored state.
+- Upon successful booking submission, the draft is purged from storage.
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+### 3. Location Permission Fallback
+- Located in [`src/hooks/useLocation.ts`](src/hooks/useLocation.ts) and [`src/components/booking/LocationPicker.tsx`](src/components/booking/LocationPicker.tsx).
+- Reviewers can tap **"Use Current Location"** to simulate GPS acquisition or tap **"Simulate GPS Deny"** to test the denial message.
+- The manual address text field is always active and editable as a fallback.
 
-## Congratulations! :tada:
+### 4. Duplicate Submit Protection
+- Located in [`src/components/common/Button.tsx`](src/components/common/Button.tsx) and [`src/screens/BookInspectionScreen.tsx`](src/screens/BookInspectionScreen.tsx).
+- When submitting, `isSubmitting` is set to `true`, disabling the submit button and rendering an `ActivityIndicator`.
+- Buttons also feature a 600ms tap throttle to prevent hardware double-tap triggers.
 
-You've successfully run and modified your React Native App. :partying_face:
+---
 
-### Now what?
+## ⚖️ Trade-offs & Future Improvements
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+1. **Production Geolocation:** In a full-scale app, integrate `@react-native-community/geolocation` with reverse-geocoding (e.g. Google Places API or Mapbox) with live address autocomplete.
+2. **Calendar UI:** Currently uses quick upcoming date chips (suitable for mobile appointment booking); could be expanded with a full month calendar modal for bookings further in advance.
+3. **Offline Sync Queue:** Could integrate NetInfo and a local queue (WatermelonDB / MMKV) to queue bookings when device loses internet connectivity.
 
-# Troubleshooting
+---
 
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+## 🤖 AI Usage Disclosure
 
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+Per Section 7 of the assessment instructions:
+AI tools (Claude / Gemini via Antigravity) were used for project scaffolding, TypeScript typing verification, and code structuring assistance. All architectural decisions, state machines, and edge-case handling were actively reviewed and verified.
