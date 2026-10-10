@@ -87,20 +87,6 @@ export const MyVehicleScreen: React.FC<MyVehicleScreenProps> = ({ navigation }) 
               </TouchableOpacity>
             </View>
           </View>
-
-          {/* Welcome Greeting Banner */}
-          <View style={styles.greetingBanner}>
-            <View style={styles.greetingTextContainer}>
-              <View style={styles.fleetBadgeRow}>
-                <View style={styles.pulseLiveDot} />
-                <Text style={styles.fleetBadgeText}>TELEMETRY ACTIVE</Text>
-              </View>
-              <Text style={styles.greetingTitle}>Welcome back, Anand</Text>
-              <Text style={styles.greetingSubtitle}>
-                Vehicle status, certified diagnostics & on-demand inspection
-              </Text>
-            </View>
-          </View>
         </View>
 
         {/* ========================================================
@@ -262,15 +248,14 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.border,
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.sm,
-    paddingBottom: spacing.lg,
-    marginBottom: spacing.lg,
+    paddingBottom: spacing.md,
+    marginBottom: spacing.md,
     ...shadows.subtle,
   },
   topBar: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: spacing.md,
   },
   brandContainer: {
     flexDirection: 'row',
@@ -354,40 +339,6 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: '#FFFFFF',
     letterSpacing: 0.5,
-  },
-  greetingBanner: {
-    paddingTop: spacing.xs,
-  },
-  greetingTextContainer: {},
-  fleetBadgeRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginBottom: 4,
-  },
-  pulseLiveDot: {
-    width: 6,
-    height: 6,
-    borderRadius: radius.full,
-    backgroundColor: colors.success,
-  },
-  fleetBadgeText: {
-    fontSize: 10,
-    fontWeight: '800',
-    color: colors.success,
-    letterSpacing: 1.2,
-  },
-  greetingTitle: {
-    fontSize: 24,
-    fontWeight: '900',
-    color: colors.primary,
-    letterSpacing: -0.4,
-    marginBottom: 2,
-  },
-  greetingSubtitle: {
-    fontSize: 13,
-    color: colors.textSecondary,
-    fontWeight: '500',
   },
 
   // ========================================================
