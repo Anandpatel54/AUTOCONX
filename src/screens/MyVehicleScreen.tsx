@@ -15,6 +15,7 @@ import { colors, radius, spacing, shadows } from '../theme';
 import { VehicleCard } from '../components/vehicle/VehicleCard';
 import { Button } from '../components/common/Button';
 import { Card } from '../components/common/Card';
+import { BellIcon } from '../components/common/BellIcon';
 
 export const MyVehicleScreen: React.FC<MyVehicleScreenProps> = ({ navigation }) => {
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
@@ -74,8 +75,7 @@ export const MyVehicleScreen: React.FC<MyVehicleScreenProps> = ({ navigation }) 
                 style={styles.bellButton}
                 accessibilityLabel="Notifications"
               >
-                <Text style={styles.bellIcon}>🔔</Text>
-                <View style={styles.unreadDot} />
+                <BellIcon color={colors.primary} hasUnread={true} />
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -251,18 +251,6 @@ const styles = StyleSheet.create({
     position: 'relative',
     borderWidth: 1,
     borderColor: colors.border,
-  },
-  bellIcon: {
-    fontSize: 16,
-  },
-  unreadDot: {
-    position: 'absolute',
-    top: 7,
-    right: 8,
-    width: 7,
-    height: 7,
-    borderRadius: radius.full,
-    backgroundColor: '#EF4444',
   },
   avatarButton: {
     width: 38,
