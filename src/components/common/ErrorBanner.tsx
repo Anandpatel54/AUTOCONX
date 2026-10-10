@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, ViewStyle } from 'react-native';
-import { colors, radius, spacing } from '../../theme';
+import { radius, spacing, shadows } from '../../theme';
 import { Button } from './Button';
 
 interface ErrorBannerProps {
@@ -18,12 +18,12 @@ export const ErrorBanner: React.FC<ErrorBannerProps> = ({
 }) => {
   return (
     <View style={[styles.container, style]}>
-      <View style={styles.content}>
+      <View style={styles.contentRow}>
         <View style={styles.iconCircle}>
-          <Text style={styles.iconText}>!</Text>
+          <Text style={styles.iconText}>✕</Text>
         </View>
         <View style={styles.textContainer}>
-          <Text style={styles.title}>Submission Failed</Text>
+          <Text style={styles.title}>Submission Error</Text>
           <Text style={styles.message}>{message}</Text>
         </View>
       </View>
@@ -31,7 +31,7 @@ export const ErrorBanner: React.FC<ErrorBannerProps> = ({
       {onRetry && (
         <View style={styles.actionRow}>
           <Button
-            title="Try Again"
+            title="Retry Booking"
             onPress={onRetry}
             loading={isRetrying}
             variant="danger"
@@ -46,14 +46,15 @@ export const ErrorBanner: React.FC<ErrorBannerProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.errorBg,
-    borderWidth: 1,
-    borderColor: colors.errorBorder,
+    backgroundColor: '#FEF2F2',
+    borderWidth: 1.5,
+    borderColor: '#FECACA',
     borderRadius: radius.md,
-    padding: spacing.md,
-    marginVertical: spacing.md,
+    padding: spacing.md + 2,
+    marginBottom: spacing.lg,
+    ...shadows.subtle,
   },
-  content: {
+  contentRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: spacing.md,
@@ -62,15 +63,15 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: radius.full,
-    backgroundColor: colors.error,
+    backgroundColor: '#EF4444',
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 2,
   },
   iconText: {
-    color: colors.textInverse,
-    fontWeight: '800',
-    fontSize: 16,
+    color: '#FFFFFF',
+    fontWeight: '900',
+    fontSize: 14,
   },
   textContainer: {
     flex: 1,
@@ -78,20 +79,22 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 14,
     fontWeight: '700',
-    color: colors.error,
-    marginBottom: spacing.xs,
+    color: '#991B1B',
+    marginBottom: 4,
   },
   message: {
     fontSize: 13,
-    color: colors.textPrimary,
+    color: '#7F1D1D',
     lineHeight: 18,
+    fontWeight: '500',
   },
   actionRow: {
-    marginTop: spacing.sm,
+    marginTop: spacing.md,
     flexDirection: 'row',
     justifyContent: 'flex-end',
   },
   retryButton: {
     paddingHorizontal: spacing.lg,
+    borderRadius: radius.sm,
   },
 });

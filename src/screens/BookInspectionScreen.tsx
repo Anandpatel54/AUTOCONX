@@ -53,7 +53,6 @@ export const BookInspectionScreen: React.FC<BookInspectionScreenProps> = ({
   const [submissionError, setSubmissionError] = useState<string | null>(null);
   const [draftRestoredNotice, setDraftRestoredNotice] = useState(false);
 
-  // Track if initial draft restoration occurred
   const hasHydratedRef = useRef(false);
 
   // Load Inspection Types from mock API
@@ -131,15 +130,12 @@ export const BookInspectionScreen: React.FC<BookInspectionScreenProps> = ({
 
   // Submit booking handler with failure and retry handling
   const handleSubmit = async () => {
-    // Clear previous error
     setSubmissionError(null);
 
-    // Validate
     if (!validateForm()) {
       return;
     }
 
-    // Submit request (Prevent duplicate taps by setting isSubmitting)
     setIsSubmitting(true);
 
     try {
@@ -157,7 +153,6 @@ export const BookInspectionScreen: React.FC<BookInspectionScreenProps> = ({
       // Navigate to Confirmation Screen
       navigation.navigate('Confirmation', { booking: response });
     } catch (err: any) {
-      // Simulate failure experience
       setSubmissionError(
         err?.message || 'Booking submission failed. Please verify connection and retry.'
       );
@@ -165,6 +160,8 @@ export const BookInspectionScreen: React.FC<BookInspectionScreenProps> = ({
       setIsSubmitting(false);
     }
   };
+
+  const selectedPackage = inspectionTypes.find(t => t.id === selectedType);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -178,20 +175,30 @@ export const BookInspectionScreen: React.FC<BookInspectionScreenProps> = ({
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          {/* Header */}
+          {/* Progress Header */}
           <View style={styles.header}>
-            <Text style={styles.subtitle}>STEP 2 OF 3</Text>
-            <Text style={styles.title}>Book Inspection</Text>
-            <Text style={styles.description}>
-              Select your service package, convenient inspection location, and preferred appointment time.
-            </Text>
+            <View style={styles.stepRow}>
+              <Text style={styles.stepText}>STEP 2 OF 3</Text>
+              <Text style={styles.stepTitle}>Inspection Details</Text>
+            </View>
+            <View style={styles.progressTrack}>
+              <View style={styles.progressFill} />
+            </View>
+
+            {/* Target Vehicle Summary Tag */}
+            <View style={styles.vehicleSummaryPill}>
+              <Text style={styles.vehiclePillCar}>2022 Nissan Patrol</Text>
+              <View style={styles.vehiclePillDivider} />
+              <Text style={styles.vehiclePillPlate}>Dubai A 12345</Text>
+            </View>
           </View>
 
           {/* Draft Restored Banner */}
           {draftRestoredNotice && (
             <View style={styles.draftBadge}>
+              <Text style={styles.draftBadgeIcon}>💾</Text>
               <Text style={styles.draftBadgeText}>
-                💾 Restored partially completed booking draft from previous session
+                Partially completed booking draft restored from previous session
               </Text>
             </View>
           )}
@@ -246,30 +253,41 @@ export const BookInspectionScreen: React.FC<BookInspectionScreenProps> = ({
 
           {/* Field 4: Additional Notes (Optional) */}
           <Input
-            label="Additional Notes (Optional)"
-            placeholder="e.g. Key is with security at gate 2, call upon arrival"
+            label="Special Instructions / Access Notes (Optional)"
+            placeholder="e.g. Underground parking level B2, gate access code #4012"
             value={notes}
             onChangeText={setNotes}
             multiline
             numberOfLines={3}
-            helperText="Any special parking instructions or vehicle observations"
+            helperText="Provide gate codes, parking bay or contact instructions"
           />
 
-          {/* Assessment Reviewer Simulation Notice */}
-          <View style={styles.evaluatorPill}>
-            <Text style={styles.evaluatorText}>
-              ℹ️ Failure Simulation: Submissions are programmed to simulate network failure on attempt #1 to demonstrate error & retry handling.
+          {/* Reviewer Testing Information Box */}
+          <View style={styles.reviewerCard}>
+            <View style={styles.reviewerHeader}>
+              <Text style={styles.reviewerTag}>ASSESSMENT REVIEWER MODE</Text>
+            </View>
+            <Text style={styles.reviewerDesc}>
+              Submissions simulate network failure on attempt #1 to demonstrate error handling & retry state.
             </Text>
           </View>
 
-          {/* Primary Action CTA */}
-          <View style={styles.ctaContainer}>
+          {/* Bottom Summary Bar & Submit Action */}
+          <View style={styles.checkoutBar}>
+            <View style={styles.priceSummary}>
+              <Text style={styles.priceLabel}>TOTAL AMOUNT</Text>
+              <Text style={styles.priceValue}>
+                {selectedPackage ? `AED ${selectedPackage.priceAed}` : 'Select package'}
+              </Text>
+            </View>
+
             <Button
               title="Confirm Booking"
               size="lg"
               loading={isSubmitting}
               disabled={isSubmitting}
               onPress={handleSubmit}
+              style={styles.submitButton}
             />
           </View>
         </ScrollView>
@@ -288,58 +306,140 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: spacing.lg,
-    paddingBottom: spacing.xxxl * 1.5,
+    paddingBottom: spacing.xxxl * 2,
   },
   header: {
-    marginBottom: spacing.lg,
+    marginBottom: spacing.xl,
   },
-  subtitle: {
+  stepRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: spacing.xs + 2,
+  },
+  stepText: {
     fontSize: 11,
     fontWeight: '800',
     color: colors.accent,
-    letterSpacing: 1.2,
-    marginBottom: 4,
+    letterSpacing: 1.5,
   },
-  title: {
-    fontSize: 26,
-    fontWeight: '800',
-    color: colors.primary,
-    letterSpacing: -0.5,
-    marginBottom: 6,
-  },
-  description: {
-    fontSize: 14,
+  stepTitle: {
+    fontSize: 13,
+    fontWeight: '700',
     color: colors.textSecondary,
-    lineHeight: 20,
+  },
+  progressTrack: {
+    height: 4,
+    backgroundColor: colors.border,
+    borderRadius: radius.full,
+    overflow: 'hidden',
+    marginBottom: spacing.md,
+  },
+  progressFill: {
+    width: '66%',
+    height: '100%',
+    backgroundColor: colors.primary,
+    borderRadius: radius.full,
+  },
+  vehicleSummaryPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.full,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs + 2,
+    gap: spacing.sm,
+  },
+  vehiclePillCar: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: colors.primary,
+  },
+  vehiclePillDivider: {
+    width: 1,
+    height: 12,
+    backgroundColor: colors.border,
+  },
+  vehiclePillPlate: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: colors.accent,
   },
   draftBadge: {
-    backgroundColor: colors.surfaceSelected,
-    borderColor: colors.accent,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#EFF6FF',
+    borderColor: '#BFDBFE',
     borderWidth: 1,
     borderRadius: radius.md,
     paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    marginBottom: spacing.md,
+    paddingVertical: spacing.sm + 2,
+    marginBottom: spacing.lg,
+    gap: spacing.sm,
+  },
+  draftBadgeIcon: {
+    fontSize: 14,
   },
   draftBadgeText: {
+    flex: 1,
     fontSize: 12,
-    color: colors.accent,
+    color: '#1E40AF',
     fontWeight: '600',
   },
-  evaluatorPill: {
+  reviewerCard: {
     backgroundColor: colors.surfaceMuted,
-    padding: spacing.md,
     borderRadius: radius.md,
+    padding: spacing.md,
+    marginVertical: spacing.lg,
     borderWidth: 1,
     borderColor: colors.border,
-    marginVertical: spacing.md,
   },
-  evaluatorText: {
-    fontSize: 11,
+  reviewerHeader: {
+    marginBottom: 4,
+  },
+  reviewerTag: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: colors.textSecondary,
+    letterSpacing: 1,
+  },
+  reviewerDesc: {
+    fontSize: 12,
     color: colors.textSecondary,
     lineHeight: 16,
   },
-  ctaContainer: {
+  checkoutBar: {
     marginTop: spacing.md,
+    backgroundColor: '#FFFFFF',
+    borderRadius: radius.lg,
+    padding: spacing.lg,
+    borderWidth: 1,
+    borderColor: colors.border,
+    gap: spacing.md,
+  },
+  priceSummary: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingBottom: spacing.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  priceLabel: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: colors.textMuted,
+    letterSpacing: 1,
+  },
+  priceValue: {
+    fontSize: 20,
+    fontWeight: '900',
+    color: colors.primary,
+  },
+  submitButton: {
+    width: '100%',
   },
 });

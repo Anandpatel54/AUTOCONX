@@ -6,8 +6,9 @@ import {
   TouchableOpacity,
   ViewStyle,
   TextStyle,
+  View,
 } from 'react-native';
-import { colors, radius, spacing } from '../../theme';
+import { colors, radius, spacing, shadows } from '../../theme';
 
 interface ButtonProps {
   title: string;
@@ -19,6 +20,7 @@ interface ButtonProps {
   style?: ViewStyle;
   textStyle?: TextStyle;
   icon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
   testID?: string;
 }
 
@@ -32,9 +34,9 @@ export const Button: React.FC<ButtonProps> = ({
   style,
   textStyle,
   icon,
+  rightIcon,
   testID,
 }) => {
-  // Double-tap throttle protection: ignore taps within 600ms of last tap
   const lastPressTime = useRef<number>(0);
 
   const handlePress = () => {
@@ -52,13 +54,14 @@ export const Button: React.FC<ButtonProps> = ({
   return (
     <TouchableOpacity
       testID={testID}
-      activeOpacity={0.75}
+      activeOpacity={0.82}
       onPress={handlePress}
       disabled={isDisabled}
       style={[
         styles.base,
         styles[variant],
         styles[`size_${size}`],
+        variant === 'primary' && shadows.card,
         isDisabled && styles.disabled,
         style,
       ]}
@@ -69,8 +72,8 @@ export const Button: React.FC<ButtonProps> = ({
           color={variant === 'outline' || variant === 'ghost' ? colors.primary : colors.textInverse}
         />
       ) : (
-        <>
-          {icon}
+        <View style={styles.contentRow}>
+          {icon && <View style={styles.iconMargin}>{icon}</View>}
           <Text
             style={[
               styles.text,
@@ -82,7 +85,8 @@ export const Button: React.FC<ButtonProps> = ({
           >
             {title}
           </Text>
-        </>
+          {rightIcon && <View style={styles.rightIconMargin}>{rightIcon}</View>}
+        </View>
       )}
     </TouchableOpacity>
   );
@@ -90,11 +94,20 @@ export const Button: React.FC<ButtonProps> = ({
 
 const styles = StyleSheet.create({
   base: {
+    borderRadius: radius.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  contentRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: radius.md,
-    gap: spacing.sm,
+  },
+  iconMargin: {
+    marginRight: spacing.sm,
+  },
+  rightIconMargin: {
+    marginLeft: spacing.sm,
   },
   // Variants
   primary: {
@@ -104,7 +117,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceMuted,
   },
   outline: {
-    backgroundColor: 'transparent',
+    backgroundColor: colors.surface,
     borderWidth: 1.5,
     borderColor: colors.borderDark,
   },
@@ -115,28 +128,28 @@ const styles = StyleSheet.create({
     backgroundColor: colors.error,
   },
   disabled: {
-    opacity: 0.55,
+    opacity: 0.5,
   },
   // Sizes
   size_sm: {
-    paddingVertical: spacing.xs + 2,
+    paddingVertical: spacing.sm,
     paddingHorizontal: spacing.md,
-    minHeight: 36,
+    minHeight: 38,
   },
   size_md: {
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.lg,
-    minHeight: 48,
+    minHeight: 50,
   },
   size_lg: {
-    paddingVertical: spacing.lg,
+    paddingVertical: 15,
     paddingHorizontal: spacing.xl,
-    minHeight: 56,
+    minHeight: 54,
   },
   // Text Styles
   text: {
-    fontWeight: '600',
-    textAlign: 'center',
+    fontWeight: '700',
+    letterSpacing: 0.2,
   },
   text_primary: {
     color: colors.textInverse,
@@ -145,7 +158,7 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
   },
   text_outline: {
-    color: colors.textPrimary,
+    color: colors.primary,
   },
   text_ghost: {
     color: colors.accent,
@@ -163,6 +176,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   textSize_lg: {
-    fontSize: 17,
+    fontSize: 16,
   },
 });

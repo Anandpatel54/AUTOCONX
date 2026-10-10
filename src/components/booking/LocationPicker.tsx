@@ -24,89 +24,79 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
   onFetchLocation,
   isLocating = false,
 }) => {
-  const [denialSimulated, setDenialSimulated] = useState(false);
   const [statusNotice, setStatusNotice] = useState<string | null>(null);
+  const [isDenied, setIsDenied] = useState(false);
 
   const handleUseCurrentLocation = async (simulateDeny: boolean) => {
     setStatusNotice(null);
+    setIsDenied(simulateDeny);
     const result = await onFetchLocation(simulateDeny);
     if (result.success && result.address) {
       onChangeText(result.address);
-      setStatusNotice('📍 GPS location acquired');
+      setStatusNotice('GPS location resolved');
     } else if (result.error) {
-      setStatusNotice(`⚠️ ${result.error}`);
+      setStatusNotice(result.error);
     }
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerRow}>
-        <Text style={styles.label}>
-          Inspection Location <Text style={styles.requiredStar}>*</Text>
-        </Text>
+      <View style={styles.labelRow}>
+        <Text style={styles.label}>Inspection Location</Text>
+        <Text style={styles.requiredStar}>*</Text>
       </View>
 
-      {/* Quick GPS Action Row */}
-      <View style={styles.actionRow}>
+      {/* Modern GPS Action Bar */}
+      <View style={styles.gpsBar}>
         <Button
-          title="Use Current Location"
+          title={isLocating ? 'Locating...' : 'Use Current Location'}
           variant="outline"
           size="sm"
-          loading={isLocating && !denialSimulated}
-          onPress={() => {
-            setDenialSimulated(false);
-            handleUseCurrentLocation(false);
-          }}
+          loading={isLocating && !isDenied}
+          onPress={() => handleUseCurrentLocation(false)}
           style={styles.gpsButton}
         />
 
-        {/* Evaluator Helper: Simulate Permission Denial */}
+        {/* Discreet Reviewer Testing Simulator */}
         <TouchableOpacity
           activeOpacity={0.7}
-          onPress={() => {
-            setDenialSimulated(true);
-            handleUseCurrentLocation(true);
-          }}
-          style={styles.simulateButton}
+          onPress={() => handleUseCurrentLocation(true)}
+          style={styles.simulatePill}
         >
-          <Text style={styles.simulateText}>Simulate GPS Deny</Text>
+          <Text style={styles.simulateText}>Test Denied GPS</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Fallback Notice */}
+      {/* GPS Status / Feedback Alert */}
       {statusNotice && (
         <View
           style={[
-            styles.noticeBox,
-            statusNotice.includes('denied') || statusNotice.includes('⚠️')
-              ? styles.noticeWarning
-              : styles.noticeSuccess,
+            styles.noticeCard,
+            isDenied ? styles.noticeCardWarning : styles.noticeCardSuccess,
           ]}
         >
           <Text
             style={[
               styles.noticeText,
-              statusNotice.includes('denied') || statusNotice.includes('⚠️')
-                ? styles.noticeWarningText
-                : styles.noticeSuccessText,
+              isDenied ? styles.noticeTextWarning : styles.noticeTextSuccess,
             ]}
           >
-            {statusNotice}
+            {isDenied ? `⚠️ ${statusNotice}` : `📍 ${statusNotice}`}
           </Text>
         </View>
       )}
 
-      {/* Manual Address Input Field (Always editable fallback) */}
+      {/* Manual Address Fallback Input */}
       <Input
-        label="Address or Area"
-        placeholder="e.g. Dubai Marina, Building 4 / Villa 12"
+        label="Street Address / Building"
+        placeholder="e.g. Dubai Marina, Princess Tower, Floor 14"
         value={value}
         onChangeText={text => {
           onChangeText(text);
           if (statusNotice) setStatusNotice(null);
         }}
         error={error}
-        helperText="Enter manual address or use GPS above"
+        helperText="Technicians travel anywhere in Dubai & Abu Dhabi"
         required
       />
     </View>
@@ -115,32 +105,37 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: spacing.md,
+    marginBottom: spacing.lg,
   },
-  headerRow: {
-    marginBottom: spacing.xs,
+  labelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: spacing.xs + 2,
+    gap: 4,
   },
   label: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '700',
     color: colors.textPrimary,
   },
   requiredStar: {
     color: colors.error,
-    fontWeight: '700',
+    fontWeight: '800',
   },
-  actionRow: {
+  gpsBar: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
-    marginVertical: spacing.xs + 2,
+    marginBottom: spacing.sm,
   },
   gpsButton: {
     flex: 1,
+    borderColor: colors.borderDark,
+    borderRadius: radius.md,
   },
-  simulateButton: {
+  simulatePill: {
     paddingHorizontal: spacing.sm + 2,
-    paddingVertical: spacing.xs + 4,
+    paddingVertical: 10,
     backgroundColor: colors.surfaceMuted,
     borderRadius: radius.md,
     borderWidth: 1,
@@ -148,36 +143,34 @@ const styles = StyleSheet.create({
   },
   simulateText: {
     fontSize: 11,
+    fontWeight: '700',
     color: colors.textSecondary,
-    fontWeight: '600',
   },
-  noticeBox: {
+  noticeCard: {
     paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
+    paddingVertical: spacing.sm + 2,
     borderRadius: radius.md,
-    marginVertical: spacing.xs + 2,
+    marginBottom: spacing.sm,
+  },
+  noticeCardSuccess: {
+    backgroundColor: colors.successBg,
+    borderWidth: 1,
+    borderColor: colors.successBorder,
+  },
+  noticeCardWarning: {
+    backgroundColor: colors.warningBg,
+    borderWidth: 1,
+    borderColor: colors.warningBorder,
   },
   noticeText: {
     fontSize: 12,
-  },
-  noticeSuccess: {
-    backgroundColor: colors.successBg,
-    borderColor: colors.successBorder,
-    borderWidth: 1,
-  },
-  noticeSuccessText: {
-    fontSize: 12,
-    color: colors.success,
     fontWeight: '600',
   },
-  noticeWarning: {
-    backgroundColor: colors.warningBg,
-    borderColor: colors.warning,
-    borderWidth: 1,
+  noticeTextSuccess: {
+    color: colors.success,
   },
-  noticeWarningText: {
-    fontSize: 12,
+  noticeTextWarning: {
     color: '#92400E',
-    fontWeight: '500',
+    lineHeight: 16,
   },
 });

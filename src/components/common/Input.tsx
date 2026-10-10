@@ -7,7 +7,7 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import { colors, radius, spacing } from '../../theme';
+import { colors, radius, spacing, shadows } from '../../theme';
 
 interface InputProps extends TextInputProps {
   label: string;
@@ -29,16 +29,13 @@ export const Input: React.FC<InputProps> = ({
   ...restProps
 }) => {
   const [isFocused, setIsFocused] = useState(false);
-
   const hasError = Boolean(error);
 
   return (
     <View style={[styles.container, containerStyle]}>
       <View style={styles.labelRow}>
-        <Text style={styles.label}>
-          {label}
-          {required && <Text style={styles.requiredStar}> *</Text>}
-        </Text>
+        <Text style={styles.label}>{label}</Text>
+        {required && <Text style={styles.requiredStar}>*</Text>}
       </View>
 
       <View
@@ -76,48 +73,52 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: spacing.xs + 2,
+    gap: 4,
   },
   label: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '700',
     color: colors.textPrimary,
   },
   requiredStar: {
     color: colors.error,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderWidth: 1.2,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1.5,
     borderColor: colors.border,
     borderRadius: radius.md,
     paddingHorizontal: spacing.md,
-    minHeight: 48,
+    minHeight: 50,
+    ...shadows.subtle,
   },
   inputFocused: {
     borderColor: colors.accent,
-    backgroundColor: colors.surface,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1.8,
   },
   inputError: {
-    borderColor: colors.error,
+    borderColor: colors.errorBorder,
     backgroundColor: colors.errorBg,
   },
   input: {
     flex: 1,
     fontSize: 15,
     color: colors.textPrimary,
+    fontWeight: '500',
     paddingVertical: spacing.sm,
   },
   multilineContainer: {
     alignItems: 'flex-start',
-    minHeight: 88,
+    minHeight: 90,
     paddingVertical: spacing.sm,
   },
   multilineInput: {
     textAlignVertical: 'top',
-    minHeight: 70,
+    minHeight: 72,
   },
   rightAccessory: {
     marginLeft: spacing.sm,
@@ -126,7 +127,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
     fontSize: 12,
     color: colors.error,
-    fontWeight: '500',
+    fontWeight: '600',
   },
   helperText: {
     marginTop: spacing.xs,
