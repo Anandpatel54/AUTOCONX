@@ -1,15 +1,15 @@
 /* eslint-env jest */
-const mockStorage: Record<string, string> = {};
+const mockStorage = {};
 
 jest.mock('@react-native-async-storage/async-storage', () => ({
-  setItem: jest.fn((key: string, value: string) => {
+  setItem: jest.fn((key, value) => {
     mockStorage[key] = value;
     return Promise.resolve();
   }),
-  getItem: jest.fn((key: string) => {
+  getItem: jest.fn(key => {
     return Promise.resolve(mockStorage[key] ?? null);
   }),
-  removeItem: jest.fn((key: string) => {
+  removeItem: jest.fn(key => {
     delete mockStorage[key];
     return Promise.resolve();
   }),
