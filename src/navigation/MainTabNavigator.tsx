@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { MainTabParamList } from './types';
 import { MyVehicleScreen } from '../screens/MyVehicleScreen';
 import { colors, radius, spacing } from '../theme';
@@ -12,7 +13,7 @@ const ReportsScreen = () => {
   return (
     <View style={styles.placeholderContainer}>
       <View style={styles.placeholderBadge}>
-        <Text style={styles.badgeEmoji}>📑</Text>
+        <Icon name="document-text-outline" size={32} color={colors.accent} />
       </View>
       <Text style={styles.placeholderTitle}>Inspection Reports</Text>
       <Text style={styles.placeholderSubtitle}>
@@ -27,7 +28,7 @@ const GarageScreen = () => {
   return (
     <View style={styles.placeholderContainer}>
       <View style={styles.placeholderBadge}>
-        <Text style={styles.badgeEmoji}>⚙️</Text>
+        <Icon name="car-sport-outline" size={32} color={colors.primary} />
       </View>
       <Text style={styles.placeholderTitle}>AutoConX Garage Hub</Text>
       <Text style={styles.placeholderSubtitle}>
@@ -37,16 +38,28 @@ const GarageScreen = () => {
   );
 };
 
-const renderVehicleIcon = ({ focused }: { focused: boolean }) => (
-  <Text style={[styles.tabIcon, focused && styles.tabIconActive]}>🚗</Text>
+const renderVehicleIcon = ({ focused, color }: { focused: boolean; color: string }) => (
+  <Icon
+    name={focused ? 'car-sport' : 'car-sport-outline'}
+    size={22}
+    color={color}
+  />
 );
 
-const renderReportsIcon = ({ focused }: { focused: boolean }) => (
-  <Text style={[styles.tabIcon, focused && styles.tabIconActive]}>📑</Text>
+const renderReportsIcon = ({ focused, color }: { focused: boolean; color: string }) => (
+  <Icon
+    name={focused ? 'document-text' : 'document-text-outline'}
+    size={22}
+    color={color}
+  />
 );
 
-const renderGarageIcon = ({ focused }: { focused: boolean }) => (
-  <Text style={[styles.tabIcon, focused && styles.tabIconActive]}>⚙️</Text>
+const renderGarageIcon = ({ focused, color }: { focused: boolean; color: string }) => (
+  <Icon
+    name={focused ? 'construct' : 'construct-outline'}
+    size={22}
+    color={color}
+  />
 );
 
 export const MainTabNavigator: React.FC = () => {
@@ -102,13 +115,6 @@ export const MainTabNavigator: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  tabIcon: {
-    fontSize: 20,
-    opacity: 0.6,
-  },
-  tabIconActive: {
-    opacity: 1,
-  },
   placeholderContainer: {
     flex: 1,
     backgroundColor: colors.background,
@@ -124,9 +130,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing.md,
-  },
-  badgeEmoji: {
-    fontSize: 30,
   },
   placeholderTitle: {
     fontSize: 20,

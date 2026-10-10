@@ -12,6 +12,7 @@ import { MyVehicleScreenProps } from '../navigation/types';
 import { getVehicles } from '../api/mockApi';
 import { Vehicle } from '../types';
 import { colors, radius, spacing, shadows } from '../theme';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { VehicleCard } from '../components/vehicle/VehicleCard';
 import { Button } from '../components/common/Button';
 import { Card } from '../components/common/Card';
@@ -55,14 +56,14 @@ export const MyVehicleScreen: React.FC<MyVehicleScreenProps> = ({ navigation }) 
           <View style={styles.topBar}>
             <View style={styles.brandContainer}>
               <View style={styles.brandLogoCircle}>
-                <Text style={styles.brandLogoText}>⚡</Text>
+                <Icon name="flash" size={18} color="#38BDF8" />
               </View>
               <View>
                 <Text style={styles.brandTitle}>
                   Auto<Text style={styles.brandTitleAccent}>ConX</Text>
                 </Text>
                 <View style={styles.locationRow}>
-                  <Text style={styles.locationPin}>📍</Text>
+                  <Icon name="location-sharp" size={12} color={colors.accent} />
                   <Text style={styles.locationText}>Dubai Marina • UAE</Text>
                 </View>
               </View>
@@ -112,7 +113,7 @@ export const MyVehicleScreen: React.FC<MyVehicleScreenProps> = ({ navigation }) 
             <Card style={styles.serviceNoticeCard}>
               <View style={styles.serviceNoticeRow}>
                 <View style={styles.serviceNoticeIconCircle}>
-                  <Text style={styles.serviceNoticeIcon}>🔧</Text>
+                  <Icon name="construct-outline" size={20} color={colors.accent} />
                 </View>
                 <View style={styles.serviceNoticeTextGroup}>
                   <Text style={styles.serviceNoticeTitle}>Annual Inspection Recommended</Text>
@@ -129,7 +130,7 @@ export const MyVehicleScreen: React.FC<MyVehicleScreenProps> = ({ navigation }) 
               <View style={styles.standardsGrid}>
                 <View style={styles.standardItem}>
                   <View style={styles.standardIconCircle}>
-                    <Text style={styles.standardIcon}>🔍</Text>
+                    <Icon name="shield-checkmark-outline" size={20} color={colors.primary} />
                   </View>
                   <Text style={styles.standardHeading}>150+ Checkpoints</Text>
                   <Text style={styles.standardDesc}>Engine, chassis, paint & diagnostics</Text>
@@ -137,7 +138,7 @@ export const MyVehicleScreen: React.FC<MyVehicleScreenProps> = ({ navigation }) 
 
                 <View style={styles.standardItem}>
                   <View style={styles.standardIconCircle}>
-                    <Text style={styles.standardIcon}>⏱️</Text>
+                    <Icon name="speedometer-outline" size={20} color={colors.primary} />
                   </View>
                   <Text style={styles.standardHeading}>Fast Dispatch</Text>
                   <Text style={styles.standardDesc}>Anywhere in Dubai & Abu Dhabi</Text>
@@ -145,7 +146,7 @@ export const MyVehicleScreen: React.FC<MyVehicleScreenProps> = ({ navigation }) 
 
                 <View style={styles.standardItem}>
                   <View style={styles.standardIconCircle}>
-                    <Text style={styles.standardIcon}>📄</Text>
+                    <Icon name="document-text-outline" size={20} color={colors.primary} />
                   </View>
                   <Text style={styles.standardHeading}>Digital Report</Text>
                   <Text style={styles.standardDesc}>HD photos & RTA passing checklist</Text>
