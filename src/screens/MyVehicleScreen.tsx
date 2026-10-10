@@ -108,77 +108,17 @@ export const MyVehicleScreen: React.FC<MyVehicleScreenProps> = ({ navigation }) 
             {/* Hero Vehicle Card */}
             <VehicleCard vehicle={vehicle} />
 
-            {/* Quick Inspection Booking CTA Card (High-Impact Hero Banner) */}
-            <TouchableOpacity
-              activeOpacity={0.88}
-              onPress={() => navigation.navigate('BookInspection', { vehicleId: vehicle.id })}
-              style={styles.bookingHeroCard}
-            >
-              <View style={styles.bookingHeroContent}>
-                <View style={styles.bookingHeroLeft}>
-                  <View style={styles.dueBadge}>
-                    <Text style={styles.dueBadgeText}>ANNUAL INSPECTION DUE</Text>
-                  </View>
-                  <Text style={styles.bookingHeroTitle}>Schedule Mobile Inspection</Text>
-                  <Text style={styles.bookingHeroDesc}>
-                    Certified AutoConX mobile van dispatched to your door. 150+ point diagnostic scan.
+            {/* Small Service & Inspection Info Section */}
+            <Card style={styles.serviceNoticeCard}>
+              <View style={styles.serviceNoticeRow}>
+                <View style={styles.serviceNoticeIconCircle}>
+                  <Text style={styles.serviceNoticeIcon}>🔧</Text>
+                </View>
+                <View style={styles.serviceNoticeTextGroup}>
+                  <Text style={styles.serviceNoticeTitle}>Annual Inspection Recommended</Text>
+                  <Text style={styles.serviceNoticeDesc}>
+                    Your Nissan Patrol is approaching its scheduled interval. Certified technicians verify 150+ mechanical checkpoints at your home or office.
                   </Text>
-                </View>
-
-                <View style={styles.bookNowArrowCircle}>
-                  <Text style={styles.arrowIcon}>→</Text>
-                </View>
-              </View>
-
-              <View style={styles.bookingHeroFooter}>
-                <Text style={styles.heroFooterFeature}>✓ Home / Office Dispatch</Text>
-                <Text style={styles.heroFooterFeature}>✓ RTA Ready</Text>
-                <Text style={styles.heroFooterPrice}>From AED 280</Text>
-              </View>
-            </TouchableOpacity>
-
-            {/* Health & Diagnostic Telemetry Overview */}
-            <Card style={styles.healthCard}>
-              <View style={styles.healthHeader}>
-                <View>
-                  <Text style={styles.healthSectionTitle}>Vehicle Diagnostics</Text>
-                  <Text style={styles.healthSectionSubtitle}>Real-time system health summary</Text>
-                </View>
-                <View style={styles.scorePill}>
-                  <Text style={styles.scorePillText}>94% OPTIMAL</Text>
-                </View>
-              </View>
-
-              {/* Telemetry Metric Bars */}
-              <View style={styles.metricsList}>
-                <View style={styles.metricItem}>
-                  <View style={styles.metricLabelRow}>
-                    <Text style={styles.metricName}>Powertrain & Gearbox</Text>
-                    <Text style={styles.metricValue}>100% Healthy</Text>
-                  </View>
-                  <View style={styles.progressBarBg}>
-                    <View style={[styles.progressBarFill, styles.progressFull]} />
-                  </View>
-                </View>
-
-                <View style={styles.metricItem}>
-                  <View style={styles.metricLabelRow}>
-                    <Text style={styles.metricName}>Brakes, Tires & Suspension</Text>
-                    <Text style={styles.metricValue}>88% Good</Text>
-                  </View>
-                  <View style={styles.progressBarBg}>
-                    <View style={[styles.progressBarFill, styles.progressHigh]} />
-                  </View>
-                </View>
-
-                <View style={styles.metricItem}>
-                  <View style={styles.metricLabelRow}>
-                    <Text style={styles.metricName}>RTA Compliance Status</Text>
-                    <Text style={styles.metricDueValue}>Renewal Due Soon</Text>
-                  </View>
-                  <View style={styles.progressBarBg}>
-                    <View style={[styles.progressBarFill, styles.progressWarning]} />
-                  </View>
                 </View>
               </View>
             </Card>
@@ -376,168 +316,40 @@ const styles = StyleSheet.create({
     gap: spacing.lg,
   },
 
-  // ========================================================
-  // BOOKING HERO CARD (HIGH IMPACT)
-  // ========================================================
-  bookingHeroCard: {
-    backgroundColor: colors.primary,
-    borderRadius: radius.lg,
-    padding: spacing.xl,
-    ...shadows.elevated,
+  serviceNoticeCard: {
+    backgroundColor: '#FFFFFF',
+    borderColor: colors.border,
+    padding: spacing.lg,
   },
-  bookingHeroContent: {
+  serviceNoticeRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: spacing.md,
+    gap: spacing.md,
   },
-  bookingHeroLeft: {
-    flex: 1,
-    paddingRight: spacing.md,
-  },
-  dueBadge: {
-    alignSelf: 'flex-start',
-    backgroundColor: '#FEF3C7',
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 3,
-    borderRadius: radius.xs,
-    marginBottom: spacing.xs + 2,
-  },
-  dueBadgeText: {
-    fontSize: 9,
-    fontWeight: '900',
-    color: '#92400E',
-    letterSpacing: 0.8,
-  },
-  bookingHeroTitle: {
-    fontSize: 17,
-    fontWeight: '800',
-    color: '#FFFFFF',
-    letterSpacing: -0.3,
-    marginBottom: 4,
-  },
-  bookingHeroDesc: {
-    fontSize: 12,
-    color: '#94A3B8',
-    lineHeight: 16,
-  },
-  bookNowArrowCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: radius.full,
-    backgroundColor: '#0284C7',
+  serviceNoticeIconCircle: {
+    width: 42,
+    height: 42,
+    borderRadius: radius.md,
+    backgroundColor: '#EFF6FF',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  arrowIcon: {
+  serviceNoticeIcon: {
     fontSize: 20,
-    color: '#FFFFFF',
-    fontWeight: '900',
   },
-  bookingHeroFooter: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingTop: spacing.md,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(255,255,255,0.12)',
+  serviceNoticeTextGroup: {
+    flex: 1,
   },
-  heroFooterFeature: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: '#E2E8F0',
-  },
-  heroFooterPrice: {
-    fontSize: 12,
-    fontWeight: '800',
-    color: '#38BDF8',
-  },
-
-  // ========================================================
-  // HEALTH CARD
-  // ========================================================
-  healthCard: {
-    backgroundColor: '#FFFFFF',
-    borderColor: colors.border,
-    padding: spacing.xl,
-  },
-  healthHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: spacing.lg,
-  },
-  healthSectionTitle: {
-    fontSize: 16,
+  serviceNoticeTitle: {
+    fontSize: 14,
     fontWeight: '800',
     color: colors.primary,
-    marginBottom: 2,
+    marginBottom: 3,
   },
-  healthSectionSubtitle: {
+  serviceNoticeDesc: {
     fontSize: 12,
     color: colors.textSecondary,
-    fontWeight: '500',
-  },
-  scorePill: {
-    backgroundColor: colors.successBg,
-    paddingHorizontal: spacing.sm + 2,
-    paddingVertical: 4,
-    borderRadius: radius.sm,
-    borderWidth: 1,
-    borderColor: colors.successBorder,
-  },
-  scorePillText: {
-    fontSize: 10,
-    fontWeight: '800',
-    color: colors.success,
-    letterSpacing: 0.8,
-  },
-  metricsList: {
-    gap: spacing.md,
-  },
-  metricItem: {
-    gap: 6,
-  },
-  metricLabelRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  metricName: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: colors.textPrimary,
-  },
-  metricValue: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: colors.success,
-  },
-  metricDueValue: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: colors.warning,
-  },
-  progressBarBg: {
-    height: 6,
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: radius.full,
-    overflow: 'hidden',
-  },
-  progressBarFill: {
-    height: '100%',
-    backgroundColor: colors.success,
-    borderRadius: radius.full,
-  },
-  progressFull: {
-    width: '100%',
-  },
-  progressHigh: {
-    width: '88%',
-  },
-  progressWarning: {
-    width: '40%',
-    backgroundColor: colors.warning,
+    lineHeight: 17,
   },
 
   // ========================================================
