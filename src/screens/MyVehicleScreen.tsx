@@ -109,47 +109,81 @@ export const MyVehicleScreen: React.FC<MyVehicleScreenProps> = ({ navigation }) 
             {/* Hero Vehicle Card */}
             <VehicleCard vehicle={vehicle} />
 
-            {/* Small Service & Inspection Info Section */}
+            {/* Service & Inspection Info Section */}
             <Card style={styles.serviceNoticeCard}>
-              <View style={styles.serviceNoticeRow}>
+              <View style={styles.serviceHeaderRow}>
+                <View style={styles.serviceStatusPill}>
+                  <View style={styles.serviceDotAmber} />
+                  <Text style={styles.serviceStatusText}>SERVICE DUE</Text>
+                </View>
+                <Text style={styles.serviceIntervalTag}>Annual Interval</Text>
+              </View>
+
+              <View style={styles.serviceNoticeMain}>
                 <View style={styles.serviceNoticeIconCircle}>
-                  <Icon name="construct-outline" size={20} color={colors.accent} />
+                  <Icon name="construct-outline" size={22} color={colors.accent} />
                 </View>
                 <View style={styles.serviceNoticeTextGroup}>
                   <Text style={styles.serviceNoticeTitle}>Annual Inspection Recommended</Text>
                   <Text style={styles.serviceNoticeDesc}>
-                    Your Nissan Patrol is approaching its scheduled interval. Certified technicians verify 150+ mechanical checkpoints at your home or office.
+                    Your Nissan Patrol is approaching its scheduled interval. Certified technicians verify 150+ mechanical checkpoints at your door.
                   </Text>
+                </View>
+              </View>
+
+              <View style={styles.servicePillList}>
+                <View style={styles.servicePillItem}>
+                  <Icon name="checkmark-circle" size={13} color={colors.success} />
+                  <Text style={styles.servicePillText}>OBD2 Diagnostics</Text>
+                </View>
+                <View style={styles.servicePillItem}>
+                  <Icon name="checkmark-circle" size={13} color={colors.success} />
+                  <Text style={styles.servicePillText}>Doorstep Dispatch</Text>
+                </View>
+                <View style={styles.servicePillItem}>
+                  <Icon name="checkmark-circle" size={13} color={colors.success} />
+                  <Text style={styles.servicePillText}>RTA Compliance</Text>
                 </View>
               </View>
             </Card>
 
-            {/* Why AutoConX Certified Standards */}
+            {/* AutoConX Certified Standards */}
             <Card style={styles.standardsCard}>
-              <Text style={styles.standardsTitle}>AutoConX Certified Guarantee</Text>
-              <View style={styles.standardsGrid}>
-                <View style={styles.standardItem}>
-                  <View style={styles.standardIconCircle}>
-                    <Icon name="shield-checkmark-outline" size={20} color={colors.primary} />
+              <Text style={styles.standardsTitle}>AutoConX Inspection Standards</Text>
+
+              <View style={styles.standardsList}>
+                <View style={styles.standardRow}>
+                  <View style={[styles.standardIconBadge, styles.badgeBlue]}>
+                    <Icon name="shield-checkmark" size={18} color="#0284C7" />
                   </View>
-                  <Text style={styles.standardHeading}>150+ Checkpoints</Text>
-                  <Text style={styles.standardDesc}>Engine, chassis, paint & diagnostics</Text>
+                  <View style={styles.standardInfo}>
+                    <Text style={styles.standardHeading}>150+ Inspection Checkpoints</Text>
+                    <Text style={styles.standardDesc}>Engine, chassis, transmission, brakes & paint scan</Text>
+                  </View>
                 </View>
 
-                <View style={styles.standardItem}>
-                  <View style={styles.standardIconCircle}>
-                    <Icon name="speedometer-outline" size={20} color={colors.primary} />
+                <View style={styles.standardDivider} />
+
+                <View style={styles.standardRow}>
+                  <View style={[styles.standardIconBadge, styles.badgeGreen]}>
+                    <Icon name="flash" size={18} color="#059669" />
                   </View>
-                  <Text style={styles.standardHeading}>Fast Dispatch</Text>
-                  <Text style={styles.standardDesc}>Anywhere in Dubai & Abu Dhabi</Text>
+                  <View style={styles.standardInfo}>
+                    <Text style={styles.standardHeading}>Fast Mobile Dispatch</Text>
+                    <Text style={styles.standardDesc}>Certified mobile service van arrives at your door</Text>
+                  </View>
                 </View>
 
-                <View style={styles.standardItem}>
-                  <View style={styles.standardIconCircle}>
-                    <Icon name="document-text-outline" size={20} color={colors.primary} />
+                <View style={styles.standardDivider} />
+
+                <View style={styles.standardRow}>
+                  <View style={[styles.standardIconBadge, styles.badgePurple]}>
+                    <Icon name="document-text" size={18} color="#7C3AED" />
                   </View>
-                  <Text style={styles.standardHeading}>Digital Report</Text>
-                  <Text style={styles.standardDesc}>HD photos & RTA passing checklist</Text>
+                  <View style={styles.standardInfo}>
+                    <Text style={styles.standardHeading}>Digital Diagnostic Report</Text>
+                    <Text style={styles.standardDesc}>Comprehensive PDF report with HD photos</Text>
+                  </View>
                 </View>
               </View>
             </Card>
@@ -309,86 +343,155 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderColor: colors.border,
     padding: spacing.lg,
+    borderRadius: radius.lg,
   },
-  serviceNoticeRow: {
+  serviceHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: spacing.md,
+  },
+  serviceStatusPill: {
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: '#FEF3C7',
+    paddingHorizontal: spacing.sm + 2,
+    paddingVertical: 3,
+    borderRadius: radius.full,
+    gap: 6,
+    borderWidth: 1,
+    borderColor: '#FDE68A',
+  },
+  serviceDotAmber: {
+    width: 6,
+    height: 6,
+    borderRadius: radius.full,
+    backgroundColor: '#D97706',
+  },
+  serviceStatusText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#92400E',
+    letterSpacing: 0.5,
+  },
+  serviceIntervalTag: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: colors.textSecondary,
+  },
+  serviceNoticeMain: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
     gap: spacing.md,
+    marginBottom: spacing.md,
   },
   serviceNoticeIconCircle: {
-    width: 42,
-    height: 42,
+    width: 44,
+    height: 44,
     borderRadius: radius.md,
     backgroundColor: '#EFF6FF',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  serviceNoticeIcon: {
-    fontSize: 20,
+    borderWidth: 1,
+    borderColor: '#DBEAFE',
   },
   serviceNoticeTextGroup: {
     flex: 1,
   },
   serviceNoticeTitle: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '800',
     color: colors.primary,
-    marginBottom: 3,
+    marginBottom: 4,
+    letterSpacing: -0.2,
   },
   serviceNoticeDesc: {
     fontSize: 12,
     color: colors.textSecondary,
-    lineHeight: 17,
+    lineHeight: 18,
+  },
+  servicePillList: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+    paddingTop: spacing.sm + 2,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+  },
+  servicePillItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.surfaceMuted,
+    paddingHorizontal: spacing.sm + 2,
+    paddingVertical: 4,
+    borderRadius: radius.sm,
+    gap: 5,
+  },
+  servicePillText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: colors.textPrimary,
   },
 
   // ========================================================
-  // STANDARDS GRID
+  // STANDARDS LIST (PREMIUM ROWS)
   // ========================================================
   standardsCard: {
     backgroundColor: '#FFFFFF',
     borderColor: colors.border,
-    padding: spacing.xl,
+    padding: spacing.lg,
+    borderRadius: radius.lg,
   },
   standardsTitle: {
     fontSize: 15,
     fontWeight: '800',
     color: colors.primary,
     marginBottom: spacing.md,
+    letterSpacing: -0.2,
   },
-  standardsGrid: {
+  standardsList: {
+    gap: spacing.xs,
+  },
+  standardRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: spacing.sm,
-  },
-  standardItem: {
-    flex: 1,
     alignItems: 'center',
-    textAlign: 'center',
+    gap: spacing.md,
+    paddingVertical: spacing.xs + 2,
   },
-  standardIconCircle: {
-    width: 38,
-    height: 38,
+  standardIconBadge: {
+    width: 40,
+    height: 40,
     borderRadius: radius.md,
-    backgroundColor: colors.surfaceMuted,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: spacing.xs + 2,
   },
-  standardIcon: {
-    fontSize: 16,
+  badgeBlue: {
+    backgroundColor: '#EFF6FF',
+  },
+  badgeGreen: {
+    backgroundColor: '#ECFDF5',
+  },
+  badgePurple: {
+    backgroundColor: '#F5F3FF',
+  },
+  standardInfo: {
+    flex: 1,
   },
   standardHeading: {
-    fontSize: 11,
+    fontSize: 13,
     fontWeight: '700',
     color: colors.textPrimary,
-    textAlign: 'center',
     marginBottom: 2,
   },
   standardDesc: {
-    fontSize: 10,
+    fontSize: 11,
     color: colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: 13,
+    lineHeight: 15,
+  },
+  standardDivider: {
+    height: 1,
+    backgroundColor: colors.borderSubtle,
+    marginVertical: 2,
   },
 
   // ========================================================
