@@ -100,12 +100,10 @@ export async function createBooking(payload: BookingRequest): Promise<BookingRes
 
   submissionAttempts += 1;
 
-  // Failure criteria:
-  // 1. If explicitly forced to fail, OR
-  // 2. Odd-numbered attempts (1st, 3rd, 5th...) fail when not overridden
+  // Failure criteria: Only fail if explicitly forced or triggered via mock condition (e.g. notes contains 'fail')
   const shouldFail =
     forceSimulateFailure === true ||
-    (forceSimulateFailure === null && submissionAttempts % 2 === 1);
+    (payload.notes ? payload.notes.toLowerCase().includes('fail') : false);
 
   if (shouldFail) {
     throw new Error(

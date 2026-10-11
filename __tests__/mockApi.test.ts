@@ -26,20 +26,21 @@ describe('mockApi Service', () => {
     expect(types.some(t => t.id === 'PRE_PURCHASE')).toBe(true);
   });
 
-  it('simulates failure on first submission and succeeds on retry', async () => {
-    const payload = {
+  it('simulates failure when triggered and succeeds on normal submission', async () => {
+    const failPayload = {
       vehicleId: 'vehicle_1',
       inspectionType: 'PRE_PURCHASE' as const,
       address: 'Dubai Marina',
       date: '2026-10-15',
-      notes: 'Test booking',
+      notes: 'fail simulation test',
     };
 
-    // 1st attempt -> Expected to fail (simulate network error)
-    await expect(createBooking(payload)).rejects.toThrow('Service temporarily unavailable');
+    // Attempt with failure condition -> Expected to fail (simulate network error)
+    await expect(createBooking(failPayload)).rejects.toThrow('Service temporarily unavailable');
 
-    // 2nd attempt (Retry) -> Expected to succeed
-    const response = await createBooking(payload);
+    // Normal attempt -> Expected to succeed immediately
+    const successPayload = { ...failPayload, notes: 'Please call before arrival' };
+    const response = await createBooking(successPayload);
     expect(response.status).toBe('CONFIRMED');
     expect(response.reference).toMatch(/^ACX-\d{5}$/);
     expect(response.address).toBe('Dubai Marina');

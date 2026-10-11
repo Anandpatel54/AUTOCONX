@@ -121,7 +121,7 @@ npx tsc --noEmit
 ### 1. Data State & Mock API Failure Simulation
 - Located in [`src/api/mockApi.ts`](src/api/mockApi.ts).
 - Network latency is simulated via async delays (~450ms–1000ms).
-- **Predictable Failure:** The booking request is programmed to fail on attempt #1 with a `503 Service Unavailable` error, allowing reviewers to test the error UI and retry experience. Attempt #2 (or clicking "Try Again") succeeds and creates the booking.
+- **Failure Simulation & Retry:** Reviewers can easily test failure and retry behavior by entering `fail` in the additional notes field (or programmatically via `failureSimulationConfig.setForceFailure(true)`). Standard submissions proceed directly to the confirmation screen.
 
 ### 2. Draft Persistence Across App Restarts
 - Located in [`src/hooks/useBookingDraft.ts`](src/hooks/useBookingDraft.ts).
