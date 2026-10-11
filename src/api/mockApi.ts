@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BookingRequest, BookingResponse, InspectionType, Vehicle } from '../types';
 
 // Mock Nissan Patrol Vehicle
@@ -132,5 +133,77 @@ export async function createBooking(payload: BookingRequest): Promise<BookingRes
     status: 'CONFIRMED',
   };
 
+  await saveConfirmedBooking(response);
+
   return response;
 }
+
+// ========================================================
+// CONFIRMED BOOKINGS PERSISTENCE & REPORTS
+// ========================================================
+const CONFIRMED_BOOKINGS_STORAGE_KEY = '@autoconx_confirmed_bookings';
+let inMemoryConfirmedBookings: BookingResponse[] = [];
+
+export async function getConfirmedBookings(): Promise<BookingResponse[]> {
+  try {
+    const raw = await AsyncStorage.getItem(CONFIRMED_BOOKINGS_STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch {}
+  return [...inMemoryConfirmedBookings];
+}
+
+export async function saveConfirmedBooking(booking: BookingResponse): Promise<void> {
+  inMemoryConfirmedBookings = [booking, ...inMemoryConfirmedBookings];
+  try {
+    await AsyncStorage.setItem(
+      CONFIRMED_BOOKINGS_STORAGE_KEY,
+      JSON.stringify(inMemoryConfirmedBookings)
+    );
+  } catch {}
+}
+
+export interface HistoricalInspectionReport {
+  id: string;
+  reportNumber: string;
+  vehiclePlate: string;
+  vehicleName: string;
+  inspectionType: string;
+  inspectionDate: string;
+  inspectorName: string;
+  overallScore: number;
+  status: 'PASSED' | 'ACTION_REQUIRED';
+  summary: string;
+  categories: {
+    name: string;
+    score: string;
+    status: 'pass' | 'warning' | 'fail';
+  }[];
+}
+
+export const MOCK_HISTORICAL_REPORTS: HistoricalInspectionReport[] = [
+  {
+    id: 'rep_1',
+    reportNumber: 'RTA-ACX-88219',
+    vehiclePlate: 'Dubai A 12345',
+    vehicleName: '2022 Nissan Patrol 5.6L V8',
+    inspectionType: 'Comprehensive Annual Safety & RTA Check',
+    inspectionDate: '15 Jan 2026',
+    inspectorName: 'Eng. Tariq Al-Mansoor (AutoConX Senior Inspector)',
+    overallScore: 98,
+    status: 'PASSED',
+    summary: 'Vehicle is in exceptional mechanical and structural condition. All 150 checkpoints verified with zero OBD2 fault codes.',
+    categories: [
+      { name: 'Engine & Powertrain', score: 'No leaks, clean emissions', status: 'pass' },
+      { name: 'OBD2 Computer Scan', score: '0 Diagnostic Trouble Codes', status: 'pass' },
+      { name: 'Braking System', score: 'Front: 8.5mm / Rear: 7.8mm (Optimal)', status: 'pass' },
+      { name: 'Paint & Bodywork', score: '110 - 135 μm (Original Factory Paint)', status: 'pass' },
+      { name: 'Chassis & Frame', score: 'No rust or structural damage', status: 'pass' },
+      { name: 'Tires & Suspension', score: 'Tread depth 6.2mm, alignment true', status: 'pass' },
+    ],
+  },
+];

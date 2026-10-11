@@ -6,6 +6,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import { BookInspectionScreenProps } from '../navigation/types';
@@ -29,6 +30,9 @@ export const BookInspectionScreen: React.FC<BookInspectionScreenProps> = ({
   navigation,
 }) => {
   const vehicleId = route.params?.vehicleId || 'vehicle_1';
+
+  // Step Wizard State (Step 1 -> Step 2 -> Step 3)
+  const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
 
   // Persistence Hook
   const { draft, isHydrated, saveDraft, clearDraft } = useBookingDraft();
@@ -163,22 +167,43 @@ export const BookInspectionScreen: React.FC<BookInspectionScreenProps> = ({
 
   const selectedPackage = inspectionTypes.find(t => t.id === selectedType);
 
-  // Dynamic Step calculation: starts at Step 1 and updates as steps are completed
-  const getStepInfo = () => {
+  // Step Navigation Handlers
+  const handleNextStep1 = () => {
     if (!selectedType) {
-      return { step: 1, title: 'Inspection Package', progress: '33%' as const };
+      setValidationErrors(prev => ({
+        ...prev,
+        inspectionType: 'Please select an inspection package to proceed',
+      }));
+      return;
     }
-    if (!address.trim()) {
-      return { step: 2, title: 'Location Details', progress: '66%' as const };
-    }
-    return {
-      step: 3,
-      title: preferredDate ? 'Ready to Confirm' : 'Preferred Date & Notes',
-      progress: '100%' as const,
-    };
+    setValidationErrors(prev => ({ ...prev, inspectionType: undefined }));
+    setCurrentStep(2);
   };
 
-  const stepInfo = getStepInfo();
+  const handleNextStep2 = () => {
+    if (!address.trim()) {
+      setValidationErrors(prev => ({
+        ...prev,
+        address: 'Please provide an address or use current location',
+      }));
+      return;
+    }
+    setValidationErrors(prev => ({ ...prev, address: undefined }));
+    setCurrentStep(3);
+  };
+
+  const handlePrevStep = () => {
+    if (currentStep === 3) setCurrentStep(2);
+    else if (currentStep === 2) setCurrentStep(1);
+  };
+
+  const getStepProgress = () => {
+    if (currentStep === 1) return { title: 'Select Package', progress: '33%' as const };
+    if (currentStep === 2) return { title: 'Inspection Location', progress: '66%' as const };
+    return { title: 'Date & Review', progress: '100%' as const };
+  };
+
+  const stepMeta = getStepProgress();
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -195,51 +220,122 @@ export const BookInspectionScreen: React.FC<BookInspectionScreenProps> = ({
           {/* Dynamic Progress Header */}
           <View style={styles.header}>
             <View style={styles.stepRow}>
-              <Text style={styles.stepText}>{`STEP ${stepInfo.step} OF 3`}</Text>
-              <Text style={styles.stepTitle}>{stepInfo.title}</Text>
+              <Text style={styles.stepText}>{`STEP ${currentStep} OF 3`}</Text>
+              <Text style={styles.stepTitle}>{stepMeta.title}</Text>
             </View>
             <View style={styles.progressTrack}>
-              <View style={[styles.progressFill, { width: stepInfo.progress }]} />
+              <View style={[styles.progressFill, { width: stepMeta.progress }]} />
             </View>
 
-            {/* Visual Stepper Indicators */}
+            {/* Visual Stepper Indicators with Tap-to-Navigate */}
             <View style={styles.stepperPillsRow}>
-              <View style={styles.stepperPill}>
-                <View style={[styles.stepperCircle, selectedType ? styles.stepperCircleDone : stepInfo.step === 1 ? styles.stepperCircleActive : null]}>
-                  <Text style={[styles.stepperCircleText, selectedType || stepInfo.step === 1 ? styles.stepperCircleTextActive : null]}>
+              <TouchableOpacity
+                activeOpacity={0.7}
+                style={styles.stepperPill}
+                onPress={() => setCurrentStep(1)}
+              >
+                <View
+                  style={[
+                    styles.stepperCircle,
+                    selectedType ? styles.stepperCircleDone : currentStep === 1 ? styles.stepperCircleActive : null,
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.stepperCircleText,
+                      selectedType || currentStep === 1 ? styles.stepperCircleTextActive : null,
+                    ]}
+                  >
                     {selectedType ? '✓' : '1'}
                   </Text>
                 </View>
-                <Text style={[styles.stepperLabel, selectedType || stepInfo.step === 1 ? styles.stepperLabelActive : null]}>
+                <Text
+                  style={[
+                    styles.stepperLabel,
+                    selectedType || currentStep === 1 ? styles.stepperLabelActive : null,
+                  ]}
+                >
                   Package
                 </Text>
-              </View>
+              </TouchableOpacity>
 
-              <View style={[styles.stepperLine, selectedType ? styles.stepperLineDone : null]} />
+              <View
+                style={[
+                  styles.stepperLine,
+                  selectedType ? styles.stepperLineDone : null,
+                ]}
+              />
 
-              <View style={styles.stepperPill}>
-                <View style={[styles.stepperCircle, address.trim() ? styles.stepperCircleDone : stepInfo.step === 2 ? styles.stepperCircleActive : null]}>
-                  <Text style={[styles.stepperCircleText, address.trim() || stepInfo.step === 2 ? styles.stepperCircleTextActive : null]}>
+              <TouchableOpacity
+                activeOpacity={0.7}
+                style={styles.stepperPill}
+                onPress={() => {
+                  if (selectedType) setCurrentStep(2);
+                }}
+              >
+                <View
+                  style={[
+                    styles.stepperCircle,
+                    address.trim() ? styles.stepperCircleDone : currentStep === 2 ? styles.stepperCircleActive : null,
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.stepperCircleText,
+                      address.trim() || currentStep === 2 ? styles.stepperCircleTextActive : null,
+                    ]}
+                  >
                     {address.trim() ? '✓' : '2'}
                   </Text>
                 </View>
-                <Text style={[styles.stepperLabel, address.trim() || stepInfo.step === 2 ? styles.stepperLabelActive : null]}>
+                <Text
+                  style={[
+                    styles.stepperLabel,
+                    address.trim() || currentStep === 2 ? styles.stepperLabelActive : null,
+                  ]}
+                >
                   Location
                 </Text>
-              </View>
+              </TouchableOpacity>
 
-              <View style={[styles.stepperLine, address.trim() ? styles.stepperLineDone : null]} />
+              <View
+                style={[
+                  styles.stepperLine,
+                  address.trim() ? styles.stepperLineDone : null,
+                ]}
+              />
 
-              <View style={styles.stepperPill}>
-                <View style={[styles.stepperCircle, preferredDate ? styles.stepperCircleDone : stepInfo.step === 3 ? styles.stepperCircleActive : null]}>
-                  <Text style={[styles.stepperCircleText, preferredDate || stepInfo.step === 3 ? styles.stepperCircleTextActive : null]}>
+              <TouchableOpacity
+                activeOpacity={0.7}
+                style={styles.stepperPill}
+                onPress={() => {
+                  if (selectedType && address.trim()) setCurrentStep(3);
+                }}
+              >
+                <View
+                  style={[
+                    styles.stepperCircle,
+                    preferredDate ? styles.stepperCircleDone : currentStep === 3 ? styles.stepperCircleActive : null,
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.stepperCircleText,
+                      preferredDate || currentStep === 3 ? styles.stepperCircleTextActive : null,
+                    ]}
+                  >
                     {preferredDate ? '✓' : '3'}
                   </Text>
                 </View>
-                <Text style={[styles.stepperLabel, preferredDate || stepInfo.step === 3 ? styles.stepperLabelActive : null]}>
+                <Text
+                  style={[
+                    styles.stepperLabel,
+                    preferredDate || currentStep === 3 ? styles.stepperLabelActive : null,
+                  ]}
+                >
                   Schedule
                 </Text>
-              </View>
+              </TouchableOpacity>
             </View>
 
             {/* Target Vehicle Summary Tag */}
@@ -260,93 +356,178 @@ export const BookInspectionScreen: React.FC<BookInspectionScreenProps> = ({
             </View>
           )}
 
-          {/* Submission Failure & Retry Banner */}
-          {submissionError && (
-            <ErrorBanner
-              message={submissionError}
-              onRetry={handleSubmit}
-              isRetrying={isSubmitting}
-            />
+          {/* ========================================================
+              STEP 1: PACKAGE SELECTION
+             ======================================================== */}
+          {currentStep === 1 && (
+            <View style={styles.stepContainer}>
+              <View style={styles.stepHeadingBlock}>
+                <Text style={styles.stepSectionTitle}>1. Select Inspection Package *</Text>
+                <Text style={styles.stepSectionDesc}>
+                  Choose the certified diagnostic tier that suits your Nissan Patrol.
+                </Text>
+              </View>
+
+              <TypeSelector
+                types={inspectionTypes}
+                selectedId={selectedType}
+                onSelect={id => {
+                  setSelectedType(id);
+                  if (validationErrors.inspectionType) {
+                    setValidationErrors(prev => ({ ...prev, inspectionType: undefined }));
+                  }
+                }}
+                error={validationErrors.inspectionType}
+              />
+
+              <View style={styles.checkoutBar}>
+                <View style={styles.priceSummary}>
+                  <Text style={styles.priceLabel}>PACKAGE PRICE</Text>
+                  <Text style={styles.priceValue}>
+                    {selectedPackage ? `AED ${selectedPackage.priceAed}` : 'Select above'}
+                  </Text>
+                </View>
+
+                <Button
+                  title="Continue to Location →"
+                  size="lg"
+                  onPress={handleNextStep1}
+                  style={styles.submitButton}
+                />
+              </View>
+            </View>
           )}
 
-          {/* Field 1: Inspection Type */}
-          <TypeSelector
-            types={inspectionTypes}
-            selectedId={selectedType}
-            onSelect={id => {
-              setSelectedType(id);
-              if (validationErrors.inspectionType) {
-                setValidationErrors(prev => ({ ...prev, inspectionType: undefined }));
-              }
-            }}
-            error={validationErrors.inspectionType}
-          />
+          {/* ========================================================
+              STEP 2: LOCATION / ADDRESS
+             ======================================================== */}
+          {currentStep === 2 && (
+            <View style={styles.stepContainer}>
+              {selectedPackage && (
+                <View style={styles.selectedPackageChip}>
+                  <Text style={styles.selectedPackageChipTitle}>✓ {selectedPackage.title}</Text>
+                  <Text style={styles.selectedPackageChipPrice}>AED {selectedPackage.priceAed}</Text>
+                </View>
+              )}
 
-          {/* Field 2: Location (GPS + Manual Fallback) */}
-          <LocationPicker
-            value={address}
-            onChangeText={val => {
-              setAddress(val);
-              if (validationErrors.address) {
-                setValidationErrors(prev => ({ ...prev, address: undefined }));
-              }
-            }}
-            error={validationErrors.address}
-            onFetchLocation={requestCurrentLocation}
-            isLocating={isLocating}
-          />
+              <View style={styles.stepHeadingBlock}>
+                <Text style={styles.stepSectionTitle}>2. Inspection Location *</Text>
+                <Text style={styles.stepSectionDesc}>
+                  Where should our certified mobile service van dispatch?
+                </Text>
+              </View>
 
-          {/* Field 3: Date Selection */}
-          <DatePickerField
-            value={preferredDate}
-            onSelectDate={d => {
-              setPreferredDate(d);
-              if (validationErrors.date) {
-                setValidationErrors(prev => ({ ...prev, date: undefined }));
-              }
-            }}
-            error={validationErrors.date}
-          />
+              <LocationPicker
+                value={address}
+                onChangeText={val => {
+                  setAddress(val);
+                  if (validationErrors.address) {
+                    setValidationErrors(prev => ({ ...prev, address: undefined }));
+                  }
+                }}
+                error={validationErrors.address}
+                onFetchLocation={requestCurrentLocation}
+                isLocating={isLocating}
+              />
 
-          {/* Field 4: Additional Notes (Optional) */}
-          <Input
-            label="Special Instructions / Access Notes (Optional)"
-            placeholder="e.g. Underground parking level B2, gate access code #4012"
-            value={notes}
-            onChangeText={setNotes}
-            multiline
-            numberOfLines={3}
-            helperText="Provide gate codes, parking bay or contact instructions"
-          />
-
-          {/* Reviewer Testing Information Box */}
-          <View style={styles.reviewerCard}>
-            <View style={styles.reviewerHeader}>
-              <Text style={styles.reviewerTag}>ASSESSMENT REVIEWER MODE</Text>
+              <View style={styles.wizardButtonRow}>
+                <Button
+                  title="← Back"
+                  variant="outline"
+                  size="lg"
+                  onPress={handlePrevStep}
+                  style={styles.wizardBackButton}
+                />
+                <Button
+                  title="Continue to Schedule →"
+                  size="lg"
+                  onPress={handleNextStep2}
+                  style={styles.wizardNextButton}
+                />
+              </View>
             </View>
-            <Text style={styles.reviewerDesc}>
-              Submissions simulate network failure on attempt #1 to demonstrate error handling & retry state.
-            </Text>
-          </View>
+          )}
 
-          {/* Bottom Summary Bar & Submit Action */}
-          <View style={styles.checkoutBar}>
-            <View style={styles.priceSummary}>
-              <Text style={styles.priceLabel}>TOTAL AMOUNT</Text>
-              <Text style={styles.priceValue}>
-                {selectedPackage ? `AED ${selectedPackage.priceAed}` : 'Select package'}
-              </Text>
+          {/* ========================================================
+              STEP 3: DATE & ACCESS NOTES + CONFIRMATION
+             ======================================================== */}
+          {currentStep === 3 && (
+            <View style={styles.stepContainer}>
+              {/* Summary of Steps 1 & 2 */}
+              <View style={styles.stepSummaryCard}>
+                <Text style={styles.stepSummaryTitle}>Booking Summary</Text>
+                <View style={styles.summaryItem}>
+                  <Text style={styles.summaryLabel}>VEHICLE:</Text>
+                  <Text style={styles.summaryVal}>2022 Nissan Patrol (Dubai A 12345)</Text>
+                </View>
+                <View style={styles.summaryItem}>
+                  <Text style={styles.summaryLabel}>PACKAGE:</Text>
+                  <Text style={styles.summaryVal}>
+                    {selectedPackage?.title} (AED {selectedPackage?.priceAed})
+                  </Text>
+                </View>
+                <View style={styles.summaryItem}>
+                  <Text style={styles.summaryLabel}>LOCATION:</Text>
+                  <Text style={styles.summaryVal}>{address}</Text>
+                </View>
+              </View>
+
+              <View style={styles.stepHeadingBlock}>
+                <Text style={styles.stepSectionTitle}>3. Preferred Date & Access Notes *</Text>
+                <Text style={styles.stepSectionDesc}>
+                  Pick your preferred arrival date and add any parking or gate access notes.
+                </Text>
+              </View>
+
+              {/* Submission Failure & Retry Banner */}
+              {submissionError && (
+                <ErrorBanner
+                  message={submissionError}
+                  onRetry={handleSubmit}
+                  isRetrying={isSubmitting}
+                />
+              )}
+
+              <DatePickerField
+                value={preferredDate}
+                onSelectDate={d => {
+                  setPreferredDate(d);
+                  if (validationErrors.date) {
+                    setValidationErrors(prev => ({ ...prev, date: undefined }));
+                  }
+                }}
+                error={validationErrors.date}
+              />
+
+              <Input
+                label="Special Instructions / Access Notes (Optional)"
+                placeholder="e.g. Underground parking level B2, gate access code #4012"
+                value={notes}
+                onChangeText={setNotes}
+                multiline
+                numberOfLines={3}
+                helperText="Provide gate codes, parking bay or contact instructions"
+              />
+
+              <View style={styles.wizardButtonRow}>
+                <Button
+                  title="← Back"
+                  variant="outline"
+                  size="lg"
+                  onPress={handlePrevStep}
+                  style={styles.wizardBackButton}
+                />
+                <Button
+                  title="Confirm Booking"
+                  size="lg"
+                  loading={isSubmitting}
+                  disabled={isSubmitting}
+                  onPress={handleSubmit}
+                  style={styles.wizardNextButton}
+                />
+              </View>
             </View>
-
-            <Button
-              title="Confirm Booking"
-              size="lg"
-              loading={isSubmitting}
-              disabled={isSubmitting}
-              onPress={handleSubmit}
-              style={styles.submitButton}
-            />
-          </View>
+          )}
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -558,5 +739,89 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     width: '100%',
+  },
+  stepContainer: {
+    gap: spacing.md,
+  },
+  stepHeadingBlock: {
+    marginBottom: spacing.xs,
+  },
+  stepSectionTitle: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: colors.primary,
+    marginBottom: 4,
+  },
+  stepSectionDesc: {
+    fontSize: 13,
+    color: colors.textSecondary,
+    lineHeight: 18,
+  },
+  selectedPackageChip: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#EFF6FF',
+    borderWidth: 1,
+    borderColor: '#BAE6FD',
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    marginBottom: spacing.xs,
+  },
+  selectedPackageChipTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: colors.accent,
+  },
+  selectedPackageChipPrice: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: colors.primary,
+  },
+  stepSummaryCard: {
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.md,
+    padding: spacing.md,
+    gap: spacing.xs + 2,
+    marginBottom: spacing.xs,
+  },
+  stepSummaryTitle: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: colors.accent,
+    letterSpacing: 1,
+    marginBottom: 4,
+  },
+  summaryItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  summaryLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: colors.textMuted,
+  },
+  summaryVal: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: colors.textPrimary,
+    maxWidth: '70%',
+    textAlign: 'right',
+  },
+  wizardButtonRow: {
+    flexDirection: 'row',
+    gap: spacing.md,
+    marginTop: spacing.md,
+    alignItems: 'center',
+  },
+  wizardBackButton: {
+    flex: 1,
+  },
+  wizardNextButton: {
+    flex: 2,
   },
 });

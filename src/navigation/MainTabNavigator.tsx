@@ -4,24 +4,10 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { MainTabParamList } from './types';
 import { MyVehicleScreen } from '../screens/MyVehicleScreen';
+import { ReportsScreen } from '../screens/ReportsScreen';
 import { colors, radius, spacing } from '../theme';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
-
-// Clean Placeholder for Reports Tab
-const ReportsScreen = () => {
-  return (
-    <View style={styles.placeholderContainer}>
-      <View style={styles.placeholderBadge}>
-        <Icon name="document-text-outline" size={32} color={colors.accent} />
-      </View>
-      <Text style={styles.placeholderTitle}>Inspection Reports</Text>
-      <Text style={styles.placeholderSubtitle}>
-        Digital 150-point diagnostic reports will be uploaded here following your certified mobile inspection.
-      </Text>
-    </View>
-  );
-};
 
 // Clean Placeholder for Garage Fleet Tab
 const GarageScreen = () => {
