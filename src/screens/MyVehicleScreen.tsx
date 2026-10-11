@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
+  Platform,
   SafeAreaView,
   ScrollView,
+  StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -158,10 +160,19 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
     paddingHorizontal: spacing.lg,
-    paddingTop: spacing.sm,
+    paddingTop: Platform.select({
+      ios: spacing.sm,
+      android: (StatusBar.currentHeight || 28) + spacing.sm,
+    }),
     paddingBottom: spacing.md,
     marginBottom: spacing.md,
-    ...shadows.subtle,
+    ...Platform.select({
+      ios: shadows.subtle,
+      android: {
+        ...shadows.subtle,
+        elevation: 2,
+      },
+    }),
   },
   topBar: {
     flexDirection: 'row',

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Platform, StyleSheet, Text, View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { MainTabParamList } from './types';
@@ -80,9 +80,15 @@ export const MainTabNavigator: React.FC = () => {
           backgroundColor: '#FFFFFF',
           borderTopColor: colors.border,
           borderTopWidth: 1,
-          height: 62,
+          height: Platform.select({
+            ios: 62,
+            android: 68,
+          }),
           paddingTop: 6,
-          paddingBottom: 8,
+          paddingBottom: Platform.select({
+            ios: 8,
+            android: 12,
+          }),
         },
       }}
     >
