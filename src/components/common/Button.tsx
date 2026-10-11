@@ -75,6 +75,8 @@ export const Button: React.FC<ButtonProps> = ({
         <View style={styles.contentRow}>
           {icon && <View style={styles.iconMargin}>{icon}</View>}
           <Text
+            numberOfLines={1}
+            ellipsizeMode="tail"
             style={[
               styles.text,
               styles[`text_${variant}`],

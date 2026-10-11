@@ -24,6 +24,7 @@ import { DatePickerField } from '../components/booking/DatePickerField';
 import { Input } from '../components/common/Input';
 import { Button } from '../components/common/Button';
 import { ErrorBanner } from '../components/common/ErrorBanner';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 export const BookInspectionScreen: React.FC<BookInspectionScreenProps> = ({
   route,
@@ -389,7 +390,8 @@ export const BookInspectionScreen: React.FC<BookInspectionScreenProps> = ({
                 </View>
 
                 <Button
-                  title="Continue to Location →"
+                  title="Continue"
+                  rightIcon={<Icon name="arrow-forward" size={16} color="#FFFFFF" />}
                   size="lg"
                   onPress={handleNextStep1}
                   style={styles.submitButton}
@@ -432,14 +434,16 @@ export const BookInspectionScreen: React.FC<BookInspectionScreenProps> = ({
 
               <View style={styles.wizardButtonRow}>
                 <Button
-                  title="← Back"
+                  title="Back"
+                  icon={<Icon name="arrow-back" size={16} color={colors.primary} />}
                   variant="outline"
                   size="lg"
                   onPress={handlePrevStep}
                   style={styles.wizardBackButton}
                 />
                 <Button
-                  title="Continue to Schedule →"
+                  title="Continue"
+                  rightIcon={<Icon name="arrow-forward" size={16} color="#FFFFFF" />}
                   size="lg"
                   onPress={handleNextStep2}
                   style={styles.wizardNextButton}
@@ -511,7 +515,8 @@ export const BookInspectionScreen: React.FC<BookInspectionScreenProps> = ({
 
               <View style={styles.wizardButtonRow}>
                 <Button
-                  title="← Back"
+                  title="Back"
+                  icon={<Icon name="arrow-back" size={16} color={colors.primary} />}
                   variant="outline"
                   size="lg"
                   onPress={handlePrevStep}
@@ -519,6 +524,7 @@ export const BookInspectionScreen: React.FC<BookInspectionScreenProps> = ({
                 />
                 <Button
                   title="Confirm Booking"
+                  rightIcon={<Icon name="checkmark-circle" size={16} color="#FFFFFF" />}
                   size="lg"
                   loading={isSubmitting}
                   disabled={isSubmitting}
@@ -820,8 +826,12 @@ const styles = StyleSheet.create({
   },
   wizardBackButton: {
     flex: 1,
+    height: 52,
+    justifyContent: 'center',
   },
   wizardNextButton: {
     flex: 2,
+    height: 52,
+    justifyContent: 'center',
   },
 });
