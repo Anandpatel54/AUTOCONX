@@ -1,6 +1,6 @@
 import React from 'react';
-import { Platform, StyleSheet, Text, View } from 'react-native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { createBottomTabNavigator, BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { MainTabParamList } from './types';
 import { MyVehicleScreen } from '../screens/MyVehicleScreen';
@@ -24,71 +24,101 @@ const GarageScreen = () => {
   );
 };
 
-const renderVehicleIcon = ({ focused, color }: { focused: boolean; color: string }) => (
-  <Icon
-    name={focused ? 'car-sport' : 'car-sport-outline'}
-    size={22}
-    color={color}
-  />
-);
+// ========================================================
+// CUSTOM FLOATING GLASSMORPHIC TAB BAR WITH ACTIVE CAPSULE
+// ========================================================
+function CustomFloatingTabBar({
+  state,
+  descriptors,
+  navigation,
+}: BottomTabBarProps): React.ReactElement {
+  return (
+    <View style={styles.floatingBarWrapper} pointerEvents="box-none">
+      <View style={styles.floatingBar}>
+        {state.routes.map((route, index) => {
+          const { options } = descriptors[route.key];
+          const isFocused = state.index === index;
 
-const renderReportsIcon = ({ focused, color }: { focused: boolean; color: string }) => (
-  <Icon
-    name={focused ? 'document-text' : 'document-text-outline'}
-    size={22}
-    color={color}
-  />
-);
+          const label =
+            options.tabBarLabel !== undefined
+              ? options.tabBarLabel
+              : options.title !== undefined
+              ? options.title
+              : route.name;
 
-const renderGarageIcon = ({ focused, color }: { focused: boolean; color: string }) => (
-  <Icon
-    name={focused ? 'construct' : 'construct-outline'}
-    size={22}
-    color={color}
-  />
-);
+          const onPress = () => {
+            const event = navigation.emit({
+              type: 'tabPress',
+              target: route.key,
+              canPreventDefault: true,
+            });
+
+            if (!isFocused && !event.defaultPrevented) {
+              navigation.navigate(route.name);
+            }
+          };
+
+          let iconName = 'car-sport-outline';
+          if (route.name === 'VehicleTab') {
+            iconName = isFocused ? 'car-sport' : 'car-sport-outline';
+          } else if (route.name === 'ReportsTab') {
+            iconName = isFocused ? 'document-text' : 'document-text-outline';
+          } else if (route.name === 'GarageTab') {
+            iconName = isFocused ? 'construct' : 'construct-outline';
+          }
+
+          return (
+            <TouchableOpacity
+              key={route.key}
+              activeOpacity={0.7}
+              accessibilityRole="button"
+              accessibilityState={isFocused ? { selected: true } : {}}
+              accessibilityLabel={typeof label === 'string' ? label : route.name}
+              onPress={onPress}
+              style={styles.tabItem}
+            >
+              <View
+                style={[
+                  styles.topIndicator,
+                  isFocused ? styles.topIndicatorActive : null,
+                ]}
+              />
+              <View
+                style={[
+                  styles.iconWrap,
+                  isFocused ? styles.iconWrapActive : null,
+                ]}
+              >
+                <Icon
+                  name={iconName}
+                  size={21}
+                  color={isFocused ? colors.accent : '#64748B'}
+                />
+              </View>
+              <Text
+                style={[
+                  styles.tabLabel,
+                  isFocused ? styles.tabLabelActive : null,
+                ]}
+                numberOfLines={1}
+              >
+                {label as string}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+    </View>
+  );
+};
 
 export const MainTabNavigator: React.FC = () => {
   return (
     <Tab.Navigator
       initialRouteName="VehicleTab"
+      tabBar={CustomFloatingTabBar}
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.textMuted,
-        tabBarLabelStyle: {
-          fontSize: 11,
-          fontWeight: '700',
-          letterSpacing: 0.2,
-          marginTop: 2,
-        },
-        tabBarStyle: {
-          position: 'absolute',
-          bottom: Platform.select({
-            ios: 22,
-            android: 14,
-          }),
-          left: 16,
-          right: 16,
-          backgroundColor: 'rgba(255, 255, 255, 0.88)',
-          borderRadius: 24,
-          height: 64,
-          borderWidth: 1,
-          borderColor: 'rgba(226, 232, 240, 0.9)',
-          paddingTop: 8,
-          paddingBottom: 8,
-          ...Platform.select({
-            ios: {
-              shadowColor: '#0F172A',
-              shadowOffset: { width: 0, height: 8 },
-              shadowOpacity: 0.12,
-              shadowRadius: 16,
-            },
-            android: {
-              elevation: 8,
-            },
-          }),
-        },
       }}
     >
       <Tab.Screen
@@ -96,7 +126,6 @@ export const MainTabNavigator: React.FC = () => {
         component={MyVehicleScreen}
         options={{
           tabBarLabel: 'My Vehicle',
-          tabBarIcon: renderVehicleIcon,
         }}
       />
       <Tab.Screen
@@ -104,7 +133,6 @@ export const MainTabNavigator: React.FC = () => {
         component={ReportsScreen}
         options={{
           tabBarLabel: 'Reports',
-          tabBarIcon: renderReportsIcon,
         }}
       />
       <Tab.Screen
@@ -112,7 +140,6 @@ export const MainTabNavigator: React.FC = () => {
         component={GarageScreen}
         options={{
           tabBarLabel: 'Garage',
-          tabBarIcon: renderGarageIcon,
         }}
       />
     </Tab.Navigator>
@@ -120,6 +147,78 @@ export const MainTabNavigator: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
+  floatingBarWrapper: {
+    position: 'absolute',
+    bottom: Platform.select({
+      ios: 22,
+      android: 14,
+    }),
+    left: 20,
+    right: 20,
+    alignItems: 'center',
+  },
+  floatingBar: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    backgroundColor: 'rgba(255, 255, 255, 0.96)',
+    borderRadius: 28,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderWidth: 1.2,
+    borderColor: 'rgba(226, 232, 240, 0.95)',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#091E36',
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.12,
+        shadowRadius: 20,
+      },
+      android: {
+        elevation: 10,
+      },
+    }),
+  },
+  tabItem: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 4,
+    position: 'relative',
+  },
+  topIndicator: {
+    width: 20,
+    height: 3,
+    borderRadius: 1.5,
+    backgroundColor: 'transparent',
+    marginBottom: 4,
+  },
+  topIndicatorActive: {
+    backgroundColor: colors.accent,
+  },
+  iconWrap: {
+    width: 44,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 2,
+    backgroundColor: 'transparent',
+  },
+  iconWrapActive: {
+    backgroundColor: '#EFF6FF',
+  },
+  tabLabel: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#64748B',
+    letterSpacing: 0.1,
+  },
+  tabLabelActive: {
+    color: colors.primary,
+    fontWeight: '800',
+  },
   placeholderContainer: {
     flex: 1,
     backgroundColor: colors.background,
