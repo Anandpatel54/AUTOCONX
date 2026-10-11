@@ -153,3 +153,4 @@ npx tsc --noEmit
 
 Per Section 7 of the assessment instructions:
 AI tools (Claude / Gemini via Antigravity) were used for project scaffolding, TypeScript typing verification, and code structuring assistance. All architectural decisions, state machines, and edge-case handling were actively reviewed and verified.
+# AUTOCONX
