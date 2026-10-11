@@ -60,20 +60,33 @@ export const MainTabNavigator: React.FC = () => {
           fontSize: 11,
           fontWeight: '700',
           letterSpacing: 0.2,
-          marginBottom: 4,
+          marginTop: 2,
         },
         tabBarStyle: {
-          backgroundColor: '#FFFFFF',
-          borderTopColor: colors.border,
-          borderTopWidth: 1,
-          height: Platform.select({
-            ios: 62,
-            android: 68,
+          position: 'absolute',
+          bottom: Platform.select({
+            ios: 22,
+            android: 14,
           }),
-          paddingTop: 6,
-          paddingBottom: Platform.select({
-            ios: 8,
-            android: 12,
+          left: 16,
+          right: 16,
+          backgroundColor: 'rgba(255, 255, 255, 0.88)',
+          borderRadius: 24,
+          height: 64,
+          borderWidth: 1,
+          borderColor: 'rgba(226, 232, 240, 0.9)',
+          paddingTop: 8,
+          paddingBottom: 8,
+          ...Platform.select({
+            ios: {
+              shadowColor: '#0F172A',
+              shadowOffset: { width: 0, height: 8 },
+              shadowOpacity: 0.12,
+              shadowRadius: 16,
+            },
+            android: {
+              elevation: 8,
+            },
           }),
         },
       }}
