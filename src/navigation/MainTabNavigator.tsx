@@ -79,12 +79,6 @@ function CustomFloatingTabBar({
             >
               <View
                 style={[
-                  styles.topIndicator,
-                  isFocused ? styles.topIndicatorActive : null,
-                ]}
-              />
-              <View
-                style={[
                   styles.iconWrap,
                   isFocused ? styles.iconWrapActive : null,
                 ]}
@@ -184,26 +178,15 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 3,
-    position: 'relative',
-  },
-  topIndicator: {
-    width: 16,
-    height: 2.5,
-    borderRadius: 1.25,
-    backgroundColor: 'transparent',
-    marginBottom: 2,
-  },
-  topIndicatorActive: {
-    backgroundColor: colors.accent,
+    paddingVertical: 5,
   },
   iconWrap: {
-    width: 36,
+    width: 38,
     height: 26,
     borderRadius: 13,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 1,
+    marginBottom: 2,
     backgroundColor: 'transparent',
   },
   iconWrapActive: {
