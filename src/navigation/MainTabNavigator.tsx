@@ -91,7 +91,7 @@ function CustomFloatingTabBar({
               >
                 <Icon
                   name={iconName}
-                  size={21}
+                  size={isFocused ? 19 : 18}
                   color={isFocused ? colors.accent : '#64748B'}
                 />
               </View>
@@ -110,7 +110,7 @@ function CustomFloatingTabBar({
       </View>
     </View>
   );
-};
+}
 
 export const MainTabNavigator: React.FC = () => {
   return (
@@ -150,11 +150,11 @@ const styles = StyleSheet.create({
   floatingBarWrapper: {
     position: 'absolute',
     bottom: Platform.select({
-      ios: 22,
-      android: 14,
+      ios: 20,
+      android: 12,
     }),
-    left: 20,
-    right: 20,
+    left: 36,
+    right: 36,
     alignItems: 'center',
   },
   floatingBar: {
@@ -162,21 +162,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
-    backgroundColor: 'rgba(255, 255, 255, 0.96)',
-    borderRadius: 28,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderWidth: 1.2,
-    borderColor: 'rgba(226, 232, 240, 0.95)',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
     ...Platform.select({
       ios: {
         shadowColor: '#091E36',
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.12,
-        shadowRadius: 20,
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.07,
+        shadowRadius: 8,
       },
       android: {
-        elevation: 10,
+        elevation: 3,
       },
     }),
   },
@@ -184,33 +184,33 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 4,
+    paddingVertical: 3,
     position: 'relative',
   },
   topIndicator: {
-    width: 20,
-    height: 3,
-    borderRadius: 1.5,
+    width: 16,
+    height: 2.5,
+    borderRadius: 1.25,
     backgroundColor: 'transparent',
-    marginBottom: 4,
+    marginBottom: 2,
   },
   topIndicatorActive: {
     backgroundColor: colors.accent,
   },
   iconWrap: {
-    width: 44,
-    height: 32,
-    borderRadius: 16,
+    width: 36,
+    height: 26,
+    borderRadius: 13,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 2,
+    marginBottom: 1,
     backgroundColor: 'transparent',
   },
   iconWrapActive: {
     backgroundColor: '#EFF6FF',
   },
   tabLabel: {
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '600',
     color: '#64748B',
     letterSpacing: 0.1,
