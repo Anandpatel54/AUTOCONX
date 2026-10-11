@@ -25,6 +25,7 @@ import { BookingResponse } from '../types';
 import { colors, radius, spacing, shadows } from '../theme';
 import { Card } from '../components/common/Card';
 import { Button } from '../components/common/Button';
+import { BellIcon } from '../components/common/BellIcon';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -67,17 +68,69 @@ export const ReportsScreen: React.FC = () => {
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
-        {/* Header */}
-        <View style={styles.header}>
+        {/* ========================================================
+            PREMIUM AUTOMOTIVE APP HEADER
+           ======================================================== */}
+        <View style={styles.headerContainer}>
+          {/* Top Bar: Brand, Location & User Controls */}
+          <View style={styles.topBar}>
+            <View style={styles.brandContainer}>
+              <View style={styles.brandLogoCircle}>
+                <Icon name="flash" size={18} color="#38BDF8" />
+              </View>
+              <View>
+                <Text style={styles.brandTitle}>
+                  Auto<Text style={styles.brandTitleAccent}>ConX</Text>
+                </Text>
+                <View style={styles.locationRow}>
+                  <Icon name="location-sharp" size={12} color={colors.accent} />
+                  <Text style={styles.locationText}>Dubai Marina • UAE</Text>
+                </View>
+              </View>
+            </View>
+
+            {/* Right Side: Notification Bell & Profile Avatar */}
+            <View style={styles.userActionsRow}>
+              <TouchableOpacity
+                activeOpacity={0.75}
+                style={styles.bellButton}
+                accessibilityLabel="Notifications"
+                onPress={() =>
+                  Alert.alert(
+                    'Notifications',
+                    'All inspection reports and technician dispatch alerts are up to date.'
+                  )
+                }
+              >
+                <BellIcon color={colors.primary} hasUnread={true} />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                activeOpacity={0.75}
+                style={styles.avatarButton}
+                accessibilityLabel="Profile"
+                onPress={() =>
+                  Alert.alert(
+                    'AutoConX Profile',
+                    'Anand Patel • VIP Member\nDubai Marina, UAE'
+                  )
+                }
+              >
+                <Text style={styles.avatarText}>AP</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Section Heading & RTA Verified Badge */}
           <View style={styles.headerTop}>
-            <View>
+            <View style={styles.titleTextGroup}>
               <Text style={styles.headerTitle}>Inspection Reports</Text>
               <Text style={styles.headerSubtitle}>
                 Digital 150-point diagnostic certifications & live dispatches
               </Text>
             </View>
             <View style={styles.badgeContainer}>
-              <Icon name="shield-checkmark" size={16} color={colors.accent} />
+              <Icon name="shield-checkmark" size={13} color={colors.accent} />
               <Text style={styles.badgeText}>RTA Verified</Text>
             </View>
           </View>
@@ -216,17 +269,43 @@ export const ReportsScreen: React.FC = () => {
                       <Text style={styles.dateText}>{report.inspectionDate}</Text>
                     </View>
 
-                    <Text style={styles.summaryText}>{report.summary}</Text>
+                    {/* Inspector Summary Box */}
+                    <View style={styles.summaryBox}>
+                      <View style={styles.summaryHeader}>
+                        <Icon name="clipboard-outline" size={13} color={colors.accent} />
+                        <Text style={styles.summaryLabel}>SENIOR INSPECTOR SUMMARY</Text>
+                      </View>
+                      <Text style={styles.summaryText}>{report.summary}</Text>
+                    </View>
 
                     {/* Checkpoints Checklist */}
                     <View style={styles.categoryGrid}>
+                      <View style={styles.categoryGridHeader}>
+                        <Icon name="shield-checkmark" size={13} color="#0284C7" />
+                        <Text style={styles.categoryGridTitle}>
+                          VERIFIED 150-POINT DIAGNOSTIC AUDIT
+                        </Text>
+                      </View>
                       {report.categories.map((cat, idx) => (
-                        <View key={idx} style={styles.categoryItem}>
-                          <Icon name="checkmark-sharp" size={13} color={colors.success} />
-                          <View style={styles.categoryTextGroup}>
-                            <Text style={styles.categoryName}>{cat.name}</Text>
-                            <Text style={styles.categoryScore}>{cat.score}</Text>
+                        <View
+                          key={idx}
+                          style={[
+                            styles.checkpointRow,
+                            idx < report.categories.length - 1 && styles.checkpointRowDivider,
+                          ]}
+                        >
+                          <View style={styles.checkpointTopRow}>
+                            <View style={styles.checkpointTitleGroup}>
+                              <View style={styles.checkpointCheckCircle}>
+                                <Icon name="checkmark" size={11} color="#059669" />
+                              </View>
+                              <Text style={styles.checkpointName}>{cat.name}</Text>
+                            </View>
+                            <View style={styles.passTag}>
+                              <Text style={styles.passTagText}>PASSED</Text>
+                            </View>
                           </View>
+                          <Text style={styles.checkpointFinding}>{cat.score}</Text>
                         </View>
                       ))}
                     </View>
@@ -281,9 +360,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8FAFC',
   },
   scrollContent: {
-    paddingBottom: spacing.xxxl * 2,
+    paddingBottom: 130,
   },
-  header: {
+  // ========================================================
+  // HEADER CONTAINER & BRAND TOP BAR
+  // ========================================================
+  headerContainer: {
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
@@ -302,11 +384,90 @@ const styles = StyleSheet.create({
       },
     }),
   },
+  topBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingBottom: spacing.sm + 2,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F1F5F9',
+  },
+  brandContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm + 2,
+  },
+  brandLogoCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: radius.md,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  brandTitle: {
+    fontSize: 18,
+    fontWeight: '900',
+    color: colors.primary,
+    letterSpacing: -0.5,
+  },
+  brandTitleAccent: {
+    color: '#0284C7',
+  },
+  locationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+  },
+  locationText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: colors.textSecondary,
+  },
+  userActionsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  bellButton: {
+    width: 38,
+    height: 38,
+    borderRadius: radius.full,
+    backgroundColor: colors.surfaceMuted,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  avatarButton: {
+    width: 38,
+    height: 38,
+    borderRadius: radius.full,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1.5,
+    borderColor: '#0284C7',
+  },
+  avatarText: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#FFFFFF',
+    letterSpacing: 0.5,
+  },
+
+  // Page Title & Subtitle + RTA Verified Badge
   headerTop: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    alignItems: 'center',
+    marginTop: spacing.sm + 4,
     marginBottom: spacing.md,
+    gap: spacing.sm,
+  },
+  titleTextGroup: {
+    flex: 1,
   },
   headerTitle: {
     fontSize: 20,
@@ -318,7 +479,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.textSecondary,
     marginTop: 2,
-    maxWidth: '85%',
+    lineHeight: 16,
   },
   badgeContainer: {
     flexDirection: 'row',
@@ -326,16 +487,19 @@ const styles = StyleSheet.create({
     gap: 4,
     backgroundColor: '#EFF6FF',
     paddingHorizontal: spacing.sm + 2,
-    paddingVertical: 4,
+    paddingVertical: 5,
     borderRadius: radius.full,
     borderWidth: 1,
-    borderColor: '#DBEAFE',
+    borderColor: '#BFDBFE',
+    flexShrink: 0,
   },
   badgeText: {
     fontSize: 11,
     fontWeight: '700',
     color: colors.accent,
   },
+
+  // Filter Row
   filterRow: {
     flexDirection: 'row',
     gap: spacing.sm,
@@ -360,6 +524,8 @@ const styles = StyleSheet.create({
   filterPillTextActive: {
     color: '#FFFFFF',
   },
+
+  // Body Content
   cardsContainer: {
     paddingHorizontal: spacing.lg,
     gap: spacing.md,
@@ -439,12 +605,12 @@ const styles = StyleSheet.create({
     color: colors.accent,
   },
   plateMiniPill: {
-    backgroundColor: colors.surfaceMuted,
+    backgroundColor: '#F8FAFC',
     paddingHorizontal: spacing.sm,
     paddingVertical: 2,
     borderRadius: radius.xs,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: '#CBD5E1',
   },
   plateMiniText: {
     fontSize: 10,
@@ -530,6 +696,7 @@ const styles = StyleSheet.create({
   inspectorRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    flexWrap: 'wrap',
     gap: 5,
     marginTop: 2,
     marginBottom: 4,
@@ -547,57 +714,128 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: colors.textMuted,
   },
+
+  // Senior Inspector Summary Box
+  summaryBox: {
+    backgroundColor: '#F8FAFC',
+    padding: spacing.sm + 2,
+    borderRadius: radius.sm,
+    borderLeftWidth: 3,
+    borderLeftColor: colors.accent,
+    marginVertical: 4,
+    borderWidth: 1,
+    borderColor: colors.borderSubtle,
+  },
+  summaryHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginBottom: 3,
+  },
+  summaryLabel: {
+    fontSize: 9,
+    fontWeight: '800',
+    color: colors.accent,
+    letterSpacing: 0.5,
+  },
   summaryText: {
     fontSize: 12,
-    color: colors.textSecondary,
+    color: colors.textPrimary,
     lineHeight: 17,
-    marginTop: 2,
-    marginBottom: spacing.xs,
   },
+
+  // Checkpoints Audit Grid (Hierarchy-structured, collision-proof)
   categoryGrid: {
     backgroundColor: '#F8FAFC',
     borderRadius: radius.md,
     padding: spacing.sm + 2,
-    gap: 6,
     borderWidth: 1,
     borderColor: colors.borderSubtle,
     marginVertical: spacing.xs,
   },
-  categoryItem: {
+  categoryGridHeader: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 6,
+    alignItems: 'center',
+    gap: 5,
+    marginBottom: 6,
+    paddingBottom: 6,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E2E8F0',
   },
-  categoryTextGroup: {
-    flex: 1,
+  categoryGridTitle: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#0369A1',
+    letterSpacing: 0.5,
+  },
+  checkpointRow: {
+    paddingVertical: 6,
+  },
+  checkpointRowDivider: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#F1F5F9',
+  },
+  checkpointTopRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginBottom: 2,
   },
-  categoryName: {
-    fontSize: 11,
+  checkpointTitleGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    flex: 1,
+  },
+  checkpointCheckCircle: {
+    width: 16,
+    height: 16,
+    borderRadius: radius.full,
+    backgroundColor: '#DCFCE7',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkpointName: {
+    fontSize: 12,
     fontWeight: '700',
     color: colors.textPrimary,
   },
-  categoryScore: {
+  passTag: {
+    backgroundColor: '#DCFCE7',
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: radius.xs,
+  },
+  passTagText: {
+    fontSize: 9,
+    fontWeight: '800',
+    color: '#15803D',
+    letterSpacing: 0.5,
+  },
+  checkpointFinding: {
     fontSize: 11,
     color: colors.textSecondary,
     fontWeight: '500',
+    paddingLeft: 22,
   },
+
+  // PDF Button
   pdfDownloadButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: spacing.sm,
     backgroundColor: colors.primary,
-    paddingVertical: spacing.sm + 2,
+    paddingVertical: spacing.sm + 3,
     borderRadius: radius.md,
     marginTop: spacing.sm,
+    ...shadows.subtle,
   },
   pdfDownloadText: {
     fontSize: 12,
     fontWeight: '700',
     color: '#FFFFFF',
+    letterSpacing: 0.2,
   },
 
   // Empty Card
