@@ -1,11 +1,15 @@
 import React from 'react';
 import {
+  Platform,
   SafeAreaView,
   ScrollView,
+  StatusBar,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { ConfirmationScreenProps } from '../navigation/types';
 import { colors, radius, spacing, shadows } from '../theme';
 import { Card } from '../components/common/Card';
@@ -26,6 +30,36 @@ export const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      {/* Platform-Specific Navigation Header Bar */}
+      <View style={styles.headerBar}>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={handleReturnHome}
+          style={styles.headerButton}
+          accessibilityLabel="Back to Vehicle"
+        >
+          <Icon
+            name={Platform.OS === 'ios' ? 'chevron-back' : 'arrow-back'}
+            size={22}
+            color={colors.primary}
+          />
+        </TouchableOpacity>
+
+        <View style={styles.headerTitleContainer}>
+          <Text style={styles.headerTitle}>Booking Confirmed</Text>
+          <Text style={styles.headerSubtitle}>AutoConX Dispatch</Text>
+        </View>
+
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={handleReturnHome}
+          style={styles.headerButton}
+          accessibilityLabel="Close"
+        >
+          <Icon name="close" size={22} color={colors.primary} />
+        </TouchableOpacity>
+      </View>
+
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
@@ -172,13 +206,59 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
+  headerBar: {
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing.md,
+    paddingTop: Platform.select({
+      ios: spacing.sm,
+      android: (StatusBar.currentHeight || 28) + spacing.xs,
+    }),
+    paddingBottom: spacing.sm + 2,
+    ...Platform.select({
+      ios: shadows.subtle,
+      android: {
+        ...shadows.subtle,
+        elevation: 2,
+      },
+    }),
+  },
+  headerButton: {
+    width: 38,
+    height: 38,
+    borderRadius: radius.full,
+    backgroundColor: colors.surfaceMuted,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  headerTitleContainer: {
+    alignItems: 'center',
+  },
+  headerTitle: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: colors.primary,
+  },
+  headerSubtitle: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: colors.accent,
+    letterSpacing: 0.5,
+  },
   scrollContent: {
     padding: spacing.lg,
     paddingBottom: spacing.xxxl * 2,
   },
   statusHeader: {
     alignItems: 'center',
-    marginVertical: spacing.xl,
+    marginTop: spacing.md,
+    marginBottom: spacing.xl,
   },
   iconCircle: {
     width: 72,
