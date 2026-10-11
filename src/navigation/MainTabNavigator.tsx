@@ -181,16 +181,18 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
   },
   iconWrap: {
-    width: 38,
-    height: 26,
-    borderRadius: 13,
+    width: 36,
+    height: 36,
+    borderRadius: radius.full,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 2,
     backgroundColor: 'transparent',
+    overflow: 'hidden',
   },
   iconWrapActive: {
     backgroundColor: '#EFF6FF',
+    borderRadius: radius.full,
   },
   tabLabel: {
     fontSize: 10,
