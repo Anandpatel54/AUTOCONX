@@ -163,6 +163,23 @@ export const BookInspectionScreen: React.FC<BookInspectionScreenProps> = ({
 
   const selectedPackage = inspectionTypes.find(t => t.id === selectedType);
 
+  // Dynamic Step calculation: starts at Step 1 and updates as steps are completed
+  const getStepInfo = () => {
+    if (!selectedType) {
+      return { step: 1, title: 'Inspection Package', progress: '33%' as const };
+    }
+    if (!address.trim()) {
+      return { step: 2, title: 'Location Details', progress: '66%' as const };
+    }
+    return {
+      step: 3,
+      title: preferredDate ? 'Ready to Confirm' : 'Preferred Date & Notes',
+      progress: '100%' as const,
+    };
+  };
+
+  const stepInfo = getStepInfo();
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView
@@ -175,14 +192,54 @@ export const BookInspectionScreen: React.FC<BookInspectionScreenProps> = ({
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          {/* Progress Header */}
+          {/* Dynamic Progress Header */}
           <View style={styles.header}>
             <View style={styles.stepRow}>
-              <Text style={styles.stepText}>STEP 2 OF 3</Text>
-              <Text style={styles.stepTitle}>Inspection Details</Text>
+              <Text style={styles.stepText}>{`STEP ${stepInfo.step} OF 3`}</Text>
+              <Text style={styles.stepTitle}>{stepInfo.title}</Text>
             </View>
             <View style={styles.progressTrack}>
-              <View style={styles.progressFill} />
+              <View style={[styles.progressFill, { width: stepInfo.progress }]} />
+            </View>
+
+            {/* Visual Stepper Indicators */}
+            <View style={styles.stepperPillsRow}>
+              <View style={styles.stepperPill}>
+                <View style={[styles.stepperCircle, selectedType ? styles.stepperCircleDone : stepInfo.step === 1 ? styles.stepperCircleActive : null]}>
+                  <Text style={[styles.stepperCircleText, selectedType || stepInfo.step === 1 ? styles.stepperCircleTextActive : null]}>
+                    {selectedType ? '✓' : '1'}
+                  </Text>
+                </View>
+                <Text style={[styles.stepperLabel, selectedType || stepInfo.step === 1 ? styles.stepperLabelActive : null]}>
+                  Package
+                </Text>
+              </View>
+
+              <View style={[styles.stepperLine, selectedType ? styles.stepperLineDone : null]} />
+
+              <View style={styles.stepperPill}>
+                <View style={[styles.stepperCircle, address.trim() ? styles.stepperCircleDone : stepInfo.step === 2 ? styles.stepperCircleActive : null]}>
+                  <Text style={[styles.stepperCircleText, address.trim() || stepInfo.step === 2 ? styles.stepperCircleTextActive : null]}>
+                    {address.trim() ? '✓' : '2'}
+                  </Text>
+                </View>
+                <Text style={[styles.stepperLabel, address.trim() || stepInfo.step === 2 ? styles.stepperLabelActive : null]}>
+                  Location
+                </Text>
+              </View>
+
+              <View style={[styles.stepperLine, address.trim() ? styles.stepperLineDone : null]} />
+
+              <View style={styles.stepperPill}>
+                <View style={[styles.stepperCircle, preferredDate ? styles.stepperCircleDone : stepInfo.step === 3 ? styles.stepperCircleActive : null]}>
+                  <Text style={[styles.stepperCircleText, preferredDate || stepInfo.step === 3 ? styles.stepperCircleTextActive : null]}>
+                    {preferredDate ? '✓' : '3'}
+                  </Text>
+                </View>
+                <Text style={[styles.stepperLabel, preferredDate || stepInfo.step === 3 ? styles.stepperLabelActive : null]}>
+                  Schedule
+                </Text>
+              </View>
             </View>
 
             {/* Target Vehicle Summary Tag */}
@@ -336,10 +393,70 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   progressFill: {
-    width: '66%',
     height: '100%',
     backgroundColor: colors.primary,
     borderRadius: radius.full,
+  },
+  stepperPillsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: spacing.md,
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm + 2,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  stepperPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  stepperCircle: {
+    width: 20,
+    height: 20,
+    borderRadius: radius.full,
+    backgroundColor: colors.surfaceMuted,
+    borderWidth: 1,
+    borderColor: colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  stepperCircleActive: {
+    backgroundColor: colors.accent,
+    borderColor: colors.accent,
+  },
+  stepperCircleDone: {
+    backgroundColor: colors.success,
+    borderColor: colors.success,
+  },
+  stepperCircleText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: colors.textMuted,
+  },
+  stepperCircleTextActive: {
+    color: '#FFFFFF',
+  },
+  stepperLabel: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: colors.textMuted,
+  },
+  stepperLabelActive: {
+    color: colors.textPrimary,
+    fontWeight: '700',
+  },
+  stepperLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: colors.border,
+    marginHorizontal: 6,
+  },
+  stepperLineDone: {
+    backgroundColor: colors.success,
   },
   vehicleSummaryPill: {
     flexDirection: 'row',
